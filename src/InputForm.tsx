@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Box,
   Button,
   Center,
@@ -14,6 +15,7 @@ import { DatePickerInput } from '@mantine/dates'
 import { createFormContext, formRootRule } from '@mantine/form'
 import {
   IconAssembly,
+  IconBulb,
   IconCalendar,
   IconTrash,
   IconUsers,
@@ -159,78 +161,84 @@ function InputForm() {
   ))
 
   return (
-    <FormProvider form={form}>
-      <form onSubmit={form.onSubmit(v => handleSubmit(v))}>
-        <Box id="scrollable" px="sm" mih={0} maw={600} mx="auto">
-          {items.length > 0 ? (
-            <Group wrap="nowrap">
-              <Box w={20} h={10} display="inline-block" />
-              <Text size="sm" fw={600} miw={200} flex={1}>
-                Date viaggio
+    <>
+      <Alert variant="light" color="blue" icon={<IconBulb />} mb="lg">
+        Non importa se i viaggi non sono ordinati in ordine temporale, verranno
+        ugualmente collocati nella giusta sequenza durante il calcolo.
+      </Alert>
+      <FormProvider form={form}>
+        <form onSubmit={form.onSubmit(v => handleSubmit(v))}>
+          <Box id="scrollable" px="sm" mih={0} maw={600} mx="auto">
+            {items.length > 0 ? (
+              <Group wrap="nowrap">
+                <Box w={20} h={10} display="inline-block" />
+                <Text size="sm" fw={600} miw={200} flex={1}>
+                  Date viaggio
+                </Text>
+                <Text size="sm" fw={600} w={100}>
+                  Partecipanti
+                </Text>
+                <ActionIcon
+                  variant="subtle"
+                  aria-label="remove-item"
+                  style={{ visibility: 'hidden' }}
+                >
+                  <IconTrash size={18} stroke={1.5} />
+                </ActionIcon>
+              </Group>
+            ) : (
+              <Text c="dimmed" ta="center">
+                Nessun viaggio trovato
               </Text>
-              <Text size="sm" fw={600} w={100}>
-                Partecipanti
-              </Text>
-              <ActionIcon
-                variant="subtle"
-                aria-label="remove-item"
-                style={{ visibility: 'hidden' }}
+            )}
+            <Stack gap="xs" mt="xs" ref={parent}>
+              {items}
+            </Stack>
+            <Group justify="center" mt="md">
+              <Button
+                variant="white"
+                type="button"
+                onClick={() =>
+                  form.insertListItem('tours', {
+                    startDate: null,
+                    endDate: null,
+                    numPar: 15,
+                    key: randomId(),
+                  })
+                }
               >
-                <IconTrash size={18} stroke={1.5} />
-              </ActionIcon>
+                Aggiungi viaggio
+              </Button>
             </Group>
-          ) : (
-            <Text c="dimmed" ta="center">
-              Nessun viaggio trovato
-            </Text>
-          )}
-          <Stack gap="xs" mt="xs" ref={parent}>
-            {items}
-          </Stack>
-          <Group justify="center" mt="md">
-            <Button
-              variant="white"
-              type="button"
-              onClick={() =>
-                form.insertListItem('tours', {
-                  startDate: null,
-                  endDate: null,
-                  numPar: 15,
-                  key: randomId(),
-                })
-              }
+          </Box>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            justify="space-between"
+            align="center"
+            p="md"
+            gap="sm"
+          >
+            <Text
+              c="red.8"
+              fw="bold"
+              p="sm"
+              bdrs="md"
+              bg="red.1"
+              style={{ visibility: form.errors?.tours ? 'visible' : 'hidden' }}
             >
-              Aggiungi viaggio
+              ERRORE: {form.errors?.tours}
+            </Text>
+            <Button
+              variant="gradient"
+              type="submit"
+              leftSection={<IconAssembly size={18} />}
+            >
+              Assegna BUS
             </Button>
-          </Group>
-        </Box>
-        <Flex
-          direction={{ base: 'column', md: 'row' }}
-          justify="space-between"
-          align="center"
-          p="md"
-          gap="sm"
-        >
-          <Text
-            c="red.8"
-            fw="bold"
-            p="sm"
-            bdrs="md"
-            bg="red.1"
-            style={{ visibility: form.errors?.tours ? 'visible' : 'hidden' }}
-          >
-            ERRORE: {form.errors?.tours}
-          </Text>
-          <Button
-            variant="gradient"
-            type="submit"
-            leftSection={<IconAssembly size={18} />}
-          >
-            Assegna BUS
-          </Button>
-        </Flex>
-      </form>
-    </FormProvider>
+          </Flex>
+        </form>
+      </FormProvider>
+    </>
   )
 }
 
