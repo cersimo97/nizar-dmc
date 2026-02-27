@@ -2,7 +2,6 @@ import {
   ActionIcon,
   Alert,
   Button,
-  Container,
   Flex,
   Group,
   List,
@@ -20,26 +19,78 @@ import {
   IconEdit,
   IconFileExport,
   IconGraph,
+  IconLayoutGrid,
   IconPlus,
+  type IconProps,
 } from '@tabler/icons-react'
 import { modals } from '@mantine/modals'
+
+const roadmapFeatures: {
+  title: string
+  description: string
+  icon: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >
+}[] = [
+  {
+    title: 'Gestione dei conflitti',
+    description:
+      "per il momento se un viaggio termina lo stesso giorno in cui inizia il successivo viene automaticamente contato quel giorno come buono. In realtà, non è sempre così e dipende dall'orario in cui il gruppo precedente lascia la città e quello successiva giunge sul posto.",
+    icon: IconArrowsShuffle,
+  },
+  {
+    title: 'Strategie',
+    description:
+      "al momento viene scelto il primo pullman libero disponibile, ma si potrebbe voler attuare una strategia di selezione diversa. Ad esempio, un'altra strategia potrebbe consistere nello scegliere il pullman che è fermo da più tempo (e quindi non necessariamente il primo).",
+    icon: IconChess,
+  },
+  {
+    title: 'Esportazione',
+    description:
+      "rendere possibile l'esportazione delle tabelle di marcia in formato PDF, CSV, TXT e XLSX (quale preferisci?)",
+    icon: IconFileExport,
+  },
+  {
+    title: 'Frequenza persone',
+    description:
+      "visualizzare nei risultati anche un grafico rappresentante il numero di persone in viaggio giorno per giorno. Utile per avere sott'occhio i picchi in cui ci sono tante persone in giro contemporaneamente.",
+    icon: IconChartBar,
+  },
+  {
+    title: 'Gestione di programmi multipli',
+    description:
+      'al momento è possibile analizzare e modificare un solo programma di viaggio per volta. Con questa funzione, sarà possibile gestire più programmi di viaggio contemporaneamente.',
+    icon: IconLayoutGrid,
+  },
+]
 
 function Welcome() {
   const { results } = useLoaderData<typeof loadResults>()
   const navigate = useNavigate()
-  const openModal = () =>
-    modals.openConfirmModal({
-      title: 'Attenzione',
-      centered: true,
-      children: (
-        <Text size="sm">
-          Creando un nuovo programma, sovrascriverai quello vecchio. Vuoi
-          continuare?
-        </Text>
-      ),
-      labels: { confirm: 'Continua', cancel: 'Annulla' },
-      onConfirm: () => handleReset(),
-    })
+
+  const openModal = () => {
+    const results = localStorage.getItem('results')
+    if (!results) return handleReset()
+    try {
+      const parsedResults = JSON.parse(results)
+      if (parsedResults.length >= 0)
+        return modals.openConfirmModal({
+          title: 'Attenzione',
+          centered: true,
+          children: (
+            <Text size="sm">
+              Creando un nuovo programma, sovrascriverai quello vecchio. Vuoi
+              continuare?
+            </Text>
+          ),
+          labels: { confirm: 'Continua', cancel: 'Annulla' },
+          onConfirm: () => handleReset(),
+        })
+      else return handleReset()
+    } catch {
+      return handleReset()
+    }
+  }
 
   function handleReset() {
     localStorage.removeItem('results')
@@ -47,7 +98,7 @@ function Welcome() {
   }
 
   return (
-    <Container>
+    <>
       <Text>Benvenuto Nizar!</Text>
       {results?.length > 0 && (
         <>
@@ -105,7 +156,7 @@ function Welcome() {
       >
         <Text>
           Questo è un MVP, ma sono in programma degli aggiornamenti che
-          arricchiranno la piattaforma con nuove funzionalità:
+          arricchiranno la piattaforma con nuove funzionalità ✨
         </Text>
         <List
           my="sm"
@@ -116,67 +167,24 @@ function Welcome() {
             },
           }}
         >
-          <ListItem
-            icon={
-              <ThemeIcon variant="transparent">
-                <IconArrowsShuffle />
-              </ThemeIcon>
-            }
-          >
-            <Text component="span" fw="bold">
-              Gestione dei conflitti:
-            </Text>{' '}
-            per il momento se un viaggio termina lo stesso giorno in cui inizia
-            il successivo viene automaticamente contato quel giorno come buono.
-            In realtà, non è sempre così e dipende dall'orario in cui il gruppo
-            precedente lascia la città e quello successiva giunge sul posto.
-          </ListItem>
-          <ListItem
-            icon={
-              <ThemeIcon variant="transparent">
-                <IconChess />
-              </ThemeIcon>
-            }
-          >
-            <Text component="span" fw="bold">
-              Strategie:
-            </Text>{' '}
-            al momento viene scelto il primo pullman libero disponibile, ma si
-            potrebbe voler attuare una strategia di selezione diversa. Ad
-            esempio, un'altra strategia potrebbe consistere nello scegliere il
-            pullman che è fermo da più tempo (e quindi non necessariamente il
-            primo).
-          </ListItem>
-          <ListItem
-            icon={
-              <ThemeIcon variant="transparent">
-                <IconFileExport />
-              </ThemeIcon>
-            }
-          >
-            <Text component="span" fw="bold">
-              Esportazione:
-            </Text>{' '}
-            rendere possibile l'esportazione delle tabelle di marcia in formato
-            PDF, CSV, TXT e XLSX (quale preferisci?)
-          </ListItem>
-          <ListItem
-            icon={
-              <ThemeIcon variant="transparent">
-                <IconChartBar />
-              </ThemeIcon>
-            }
-          >
-            <Text component="span" fw="bold">
-              Frequenza persone:
-            </Text>{' '}
-            visualizzare nei risultati anche un grafico rappresentante il numero
-            di persone in viaggio giorno per giorno. Utile per avere sott'occhio
-            i picchi in cui ci sono tante persone in giro contemporaneamente.
-          </ListItem>
+          {roadmapFeatures.map(feat => (
+            <ListItem
+              key={feat.title}
+              icon={
+                <ThemeIcon variant="transparent">
+                  <feat.icon />
+                </ThemeIcon>
+              }
+            >
+              <Text component="span" fw="bold">
+                {feat.title}:
+              </Text>{' '}
+              {feat.description}
+            </ListItem>
+          ))}
         </List>
       </Alert>
-    </Container>
+    </>
   )
 }
 
