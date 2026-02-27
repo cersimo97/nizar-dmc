@@ -10,6 +10,7 @@ import {
   Box,
   Divider,
   Group,
+  Image,
   List,
   Paper,
   Stack,
@@ -92,7 +93,21 @@ function PlanningView() {
             </div>
           </Group>
           <Divider />
-          <Text>N° bus necessari: {totalBuses}</Text>
+          <Group align="center">
+            <Text>N° bus necessari:</Text>
+            <Group gap="sm">
+              {Array.from({ length: totalBuses }).map((_, i) => (
+                <Image
+                  key={`bus-${i.toString().padStart(2, '0')}`}
+                  src="/minibus.png"
+                  alt={`minibus-unit-${i.toString()}`}
+                  h="2rem"
+                  w="auto"
+                  fit="contain"
+                />
+              ))}
+            </Group>
+          </Group>
         </Stack>
       </Paper>
       <Group
