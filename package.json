@@ -21,21 +21,25 @@
     ]
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.9.0",
     "@mantine/core": "^8.3.15",
     "@mantine/dates": "^8.3.15",
     "@mantine/form": "^8.3.15",
     "@mantine/hooks": "^8.3.15",
+    "@mantine/modals": "^8.3.15",
     "@tabler/icons-react": "^3.37.1",
     "colord": "^2.9.3",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
+    "randomcolor": "^0.6.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router": "^7.13.0"
+    "react-router": "^7.13.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
+    "@types/randomcolor": "^0.5.9",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react-swc": "^4.2.2",

@@ -1,119 +1,116 @@
 import {
-  addDays,
   eachDayOfInterval,
   formatDate,
   isAfter,
   isBefore,
   isSameDay,
-  subDays,
 } from 'date-fns'
-import type { Tour } from './types/Tour'
-import { Box, Divider, Group, List, Stack, Text, Title } from '@mantine/core'
-import Block from './Block'
-import { colord, extend, random } from 'colord'
+import {
+  Alert,
+  Box,
+  Divider,
+  Group,
+  List,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core'
+import Block from '../Block'
+import { colord, extend } from 'colord'
 import a11yPlugin from 'colord/plugins/a11y'
+import randomColor from 'randomcolor'
+import { Link, useLoaderData } from 'react-router'
+import { fillBlocks, formatter } from './lib'
+import type loadResults from '../loaders/loadResults'
+import { IconInfoCircle } from '@tabler/icons-react'
 
 extend([a11yPlugin])
 
-const formatter = (d: Date) => Intl.DateTimeFormat('it-IT').format(d)
 const UNIT_WIDTH = 20
 
-function fillBlocks(
-  start: Date,
-  end: Date,
-  arr: { start: Date; end: Date; hide?: boolean }[],
-  direction: 'left' | 'right' = 'right'
-): { start: Date; end: Date; hide?: boolean }[] {
-  if (isAfter(start, end)) return []
-  if (arr.length === 0) return [{ start, end, hide: true }]
-  if (direction === 'left') {
-    const item = arr[arr.length - 1]
-    return [
-      ...fillBlocks(
-        start,
-        subDays(item.start, 1),
-        arr.slice(0, arr.length - 1),
-        'left'
-      ),
-      item,
-      ...fillBlocks(addDays(item.end, 1), end, [], 'right'),
-    ]
-  } else {
-    const item = arr[0]
-    return [
-      ...fillBlocks(start, subDays(item.start, 1), [], 'left'),
-      item,
-      ...fillBlocks(
-        addDays(item.end, 1),
-        end,
-        arr.slice(1, arr.length),
-        'right'
-      ),
-    ]
-  }
-}
+function PlanningView() {
+  const { results } = useLoaderData<typeof loadResults>()
 
-interface Props {
-  data: Tour[]
-}
+  if (!results || results.length === 0) return
 
-function PlanningView({ data }: Props) {
-  if (data.length === 0) return
-
-  const minDate = data
+  const minDate = results
     .map(t => t.startDate)
     .reduce((prev, curr) => (isBefore(curr, prev) ? curr : prev))
-  const maxDate = data
+  const maxDate = results
     .map(t => t.endDate)
     .reduce((prev, curr) => (isAfter(curr, prev) ? curr : prev))
 
   const dateRange = eachDayOfInterval({ start: minDate, end: maxDate })
 
   const totalBuses =
-    data
+    results
       .map(t => t.assignedBus!)
       .reduce((prev, curr) => (curr > prev ? curr : prev)) + 1
-  const busPlans = Array.from({ length: totalBuses }).map((_, b) => {
-    let c = random()
-    while (c.brightness() < 0.7 || !colord('black').isReadable(c)) {
-      c = c.lighten().desaturate()
-    }
-    return {
-      color: c,
-      tours: data
-        .filter(t => t.assignedBus === b)
-        .map(t => ({ start: t.startDate, end: t.endDate })),
-    }
+  const colors = randomColor({
+    format: 'hex',
+    luminosity: 'light',
+    count: totalBuses,
   })
+  const busPlans = Array.from({ length: totalBuses }).map((_, b) => ({
+    color: colord(colors[b]),
+    tours: results
+      .filter(t => t.assignedBus === b)
+      .map(t => ({ start: t.startDate, end: t.endDate })),
+  }))
   const busPlansFilled = busPlans.map(bp => ({
-    color: bp.color,
+    color: colord(bp.color),
     tours: fillBlocks(minDate, maxDate, bp.tours, 'right'),
   }))
 
   return (
-    <>
-      <Group justify="space-between">
-        <div>
-          <Text size="xs" mb={0} c="dimmed">
-            Data inizio:
-          </Text>
-          <Text size="lg" fw="bold">
-            {formatter(minDate)}
-          </Text>
-        </div>
-        <Divider orientation="vertical" />
-        <div style={{ textAlign: 'right' }}>
-          <Text size="xs" mb={0} c="dimmed">
-            Data fine:
-          </Text>
-          <Text size="lg" fw="bold">
-            {formatter(maxDate)}
-          </Text>
-        </div>
-      </Group>
-      <Group align="stretch" gap="xs" grow>
+    <Stack gap="lg">
+      <Link to="/input-form">← Torna indietro</Link>
+      <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
+        Per ogni viaggio, la durata è stata calcolata a partire dal secondo
+        giorno fino al penultimo.
+      </Alert>
+      <Paper withBorder p="lg" bg="gray.0">
+        <Stack gap="sm">
+          <Group justify="space-between">
+            <div>
+              <Text size="sm" mb={0} c="dimmed">
+                Data inizio:
+              </Text>
+              <Text size="xl" fw="bold">
+                {formatter(minDate)}
+              </Text>
+            </div>
+            <Divider orientation="vertical" />
+            <div style={{ textAlign: 'right' }}>
+              <Text size="sm" mb={0} c="dimmed">
+                Data fine:
+              </Text>
+              <Text size="xl" fw="bold">
+                {formatter(maxDate)}
+              </Text>
+            </div>
+          </Group>
+          <Divider />
+          <Text>N° bus necessari: {totalBuses}</Text>
+        </Stack>
+      </Paper>
+      <Group
+        align="stretch"
+        gap="xs"
+        grow
+        wrap="nowrap"
+        style={{ overflowX: 'auto' }}
+      >
         {busPlans.map((bp, i) => (
-          <Stack key={i} bg={bp.color.toHex()} bdrs="md" p="md" gap="xs">
+          <Stack
+            key={i}
+            bg={bp.color.toHex()}
+            bdrs="md"
+            p="md"
+            gap="xs"
+            miw="fit-content"
+          >
             <Title
               order={3}
               size="h2"
@@ -125,7 +122,7 @@ function PlanningView({ data }: Props) {
             <List
               listStyleType="none"
               ml={0}
-              p={2}
+              px="sm"
               bdrs="md"
               ta="center"
               bg={bp.color.lighten().toHex()}
@@ -141,7 +138,7 @@ function PlanningView({ data }: Props) {
       </Group>
       <div
         style={{
-          overflowX: 'scroll',
+          overflowX: 'auto',
           maxWidth: '100%',
           minWidth: 0,
           margin: '2rem auto',
@@ -185,7 +182,7 @@ function PlanningView({ data }: Props) {
           )
         })}
       </div>
-    </>
+    </Stack>
   )
 }
 
