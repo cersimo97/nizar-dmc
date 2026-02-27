@@ -3,9 +3,11 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   Group,
   isNumberLike,
   NumberInput,
+  Stack,
   Text,
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
@@ -13,13 +15,16 @@ import { createFormContext, formRootRule } from '@mantine/form'
 import {
   IconAssembly,
   IconCalendar,
-  IconGripVertical,
   IconTrash,
   IconUsers,
 } from '@tabler/icons-react'
 import { randomId } from '@mantine/hooks'
 import { parse } from 'date-fns'
 import type { Tour } from './types/Tour'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { useLoaderData, useNavigate } from 'react-router'
+import { assignBuses } from './lib/calc'
+import loadResults from './loaders/loadResults'
 
 type FormValue = {
   tours: {
@@ -36,13 +41,14 @@ function SortableItem({ index }: { index: number }) {
   const form = useFormContext()
 
   return (
-    <Group mt="xs">
+    <Group wrap="nowrap">
       <Center w={20}>
-        <IconGripVertical size={18} cursor="grab" />
+        <Text c="dimmed" size="xl" fw="bold" opacity={0.5}>
+          {index + 1}
+        </Text>
       </Center>
       <DatePickerInput
         type="range"
-        w={260}
         leftSectionPointerEvents="none"
         leftSection={<IconCalendar size={18} stroke={1.5} />}
         value={[
@@ -78,10 +84,10 @@ function SortableItem({ index }: { index: number }) {
             </>
           )
         }
+        flex={1}
       />
       <NumberInput
         min={0}
-        maw={100}
         leftSectionPointerEvents="none"
         leftSection={<IconUsers size={18} stroke={1.5} />}
         key={form.key(`tours.${index}.numPar`)}
@@ -93,6 +99,7 @@ function SortableItem({ index }: { index: number }) {
             </Text>
           )
         }
+        maw={100}
       />
       <ActionIcon
         variant="subtle"
@@ -107,11 +114,22 @@ function SortableItem({ index }: { index: number }) {
   )
 }
 
-function InputForm({ onCalculate }: { onCalculate: (tl: Tour[]) => void }) {
+function InputForm() {
+  const { results } = useLoaderData<typeof loadResults>()
+  const navigate = useNavigate()
+  const [parent] = useAutoAnimate()
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      tours: [],
+      tours:
+        results?.length > 0
+          ? results.map(r => ({
+              key: randomId(),
+              startDate: r.startDate,
+              endDate: r.endDate,
+              numPar: r.numPar,
+            }))
+          : [],
     },
     validate: {
       tours: {
@@ -131,49 +149,44 @@ function InputForm({ onCalculate }: { onCalculate: (tl: Tour[]) => void }) {
 
   function handleSubmit(v: FormValue) {
     const tl = v.tours.map(t => t as Tour)
-    onCalculate(tl)
+    const results = assignBuses(tl)
+    localStorage.setItem('results', JSON.stringify(results))
+    navigate('/planning-view')
   }
 
-  const items = form
-    .getValues()
-    .tours.map((item, index) => <SortableItem key={item.key} index={index} />)
+  const items = form.values.tours.map((item, index) => (
+    <SortableItem key={item.key} index={index} />
+  ))
 
   return (
     <FormProvider form={form}>
-      <form
-        onSubmit={form.onSubmit(v => handleSubmit(v))}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flex: '1',
-          minHeight: 0,
-        }}
-      >
-        <Box
-          id="scrollable"
-          maw={800}
-          px="sm"
-          mih={0}
-          mx="auto"
-          flex={1}
-          style={{ overflowY: 'auto' }}
-        >
+      <form onSubmit={form.onSubmit(v => handleSubmit(v))}>
+        <Box id="scrollable" px="sm" mih={0} maw={600} mx="auto">
           {items.length > 0 ? (
-            <Group>
+            <Group wrap="nowrap">
               <Box w={20} h={10} display="inline-block" />
-              <Text size="sm" fw={600} w={260}>
+              <Text size="sm" fw={600} miw={200} flex={1}>
                 Date viaggio
               </Text>
-              <Text size="sm" fw={600} maw={100}>
+              <Text size="sm" fw={600} w={100}>
                 Partecipanti
               </Text>
+              <ActionIcon
+                variant="subtle"
+                aria-label="remove-item"
+                style={{ visibility: 'hidden' }}
+              >
+                <IconTrash size={18} stroke={1.5} />
+              </ActionIcon>
             </Group>
           ) : (
             <Text c="dimmed" ta="center">
               Nessun viaggio trovato
             </Text>
           )}
-          {items}
+          <Stack gap="xs" mt="xs" ref={parent}>
+            {items}
+          </Stack>
           <Group justify="center" mt="md">
             <Button
               variant="white"
@@ -191,11 +204,12 @@ function InputForm({ onCalculate }: { onCalculate: (tl: Tour[]) => void }) {
             </Button>
           </Group>
         </Box>
-        <Group
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
           justify="space-between"
           align="center"
           p="md"
-          style={{ flexShrink: 0 }}
+          gap="sm"
         >
           <Text
             c="red.8"
@@ -214,7 +228,7 @@ function InputForm({ onCalculate }: { onCalculate: (tl: Tour[]) => void }) {
           >
             Assegna BUS
           </Button>
-        </Group>
+        </Flex>
       </form>
     </FormProvider>
   )
