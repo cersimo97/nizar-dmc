@@ -4,6 +4,7 @@ import Welcome from './Welcome'
 import InputForm from './InputForm'
 import PlanningView from './PlanningView'
 import loadResults from './loaders/loadResults'
+import Vouchers from './Vouchers'
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
         Component: PlanningView,
         loader: loadResults,
       },
+      { path: 'vouchers', Component: Vouchers },
     ],
   },
 ])
