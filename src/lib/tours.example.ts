@@ -213,20 +213,20 @@ export const input_2: Tour[] = [
 
 export const output_2: Tour[] = [
   {
-    startDate: new Date(2020, 0, 1),
-    endDate: new Date(2020, 0, 11),
+    startDate: new Date(2020, 0, 2),
+    endDate: new Date(2020, 0, 10),
     numPar: 15,
     assignedBus: 0,
   },
   {
-    startDate: new Date(2020, 0, 13),
-    endDate: new Date(2020, 0, 23),
+    startDate: new Date(2020, 0, 14),
+    endDate: new Date(2020, 0, 22),
     numPar: 15,
     assignedBus: 0,
   },
   {
-    startDate: new Date(2020, 0, 18),
-    endDate: new Date(2020, 0, 28),
+    startDate: new Date(2020, 0, 19),
+    endDate: new Date(2020, 0, 27),
     numPar: 13,
     assignedBus: 1,
   },
