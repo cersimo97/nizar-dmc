@@ -67,6 +67,19 @@ function Vouchers() {
     }
   }
 
+  // Update check-ins/outs and endDate accordingly
+  // when changing startDate
+  form.watch('dates.from', ({ value }) => {
+    const tl = form.getValues().tour.length
+    let currentDate = value
+    for (let i = 0; i < tl; i++) {
+      form.setFieldValue(`tour.${i}.dates.in`, currentDate)
+      currentDate = dayjs(currentDate).add(1, 'day').toDate()
+      form.setFieldValue(`tour.${i}.dates.out`, currentDate)
+    }
+    form.setFieldValue('dates.to', currentDate)
+  })
+
   return (
     <>
       <Title order={2} style={{ textAlign: 'center' }}>
@@ -86,6 +99,9 @@ function Vouchers() {
               placeholder="Seleziona data di inizio"
               valueFormat="DD/MM/YYYY"
               {...form.getInputProps('dates.from')}
+              onChange={d =>
+                form.setFieldValue('dates.from', new Date(d as string))
+              }
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -94,6 +110,9 @@ function Vouchers() {
               placeholder="Seleziona data di fine"
               valueFormat="DD/MM/YYYY"
               {...form.getInputProps('dates.to')}
+              onChange={d =>
+                form.setFieldValue('dates.to', new Date(d as string))
+              }
             />
           </Grid.Col>
           <Grid.Col span={9}>
