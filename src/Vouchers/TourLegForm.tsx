@@ -10,7 +10,7 @@ import {
   Title,
   useMantineTheme,
 } from '@mantine/core'
-import { DateInput } from '@mantine/dates'
+import { DatePickerInput } from '@mantine/dates'
 import type { UseFormReturnType } from '@mantine/form'
 import {
   IconAlertCircle,
@@ -79,14 +79,16 @@ const TourLegForm = React.memo(function TourLegForm({
         />
       </Grid.Col>
       <Grid.Col span={6}>
-        <DateInput
+        <DatePickerInput
+          dropdownType="modal"
           label="Check-in"
           valueFormat="DD/MM/YYYY"
           {...form.getInputProps(`tour.${index}.dates.in`)}
         />
       </Grid.Col>
       <Grid.Col span={6}>
-        <DateInput
+        <DatePickerInput
+          dropdownType="modal"
           label="Check-out"
           valueFormat="DD/MM/YYYY"
           {...form.getInputProps(`tour.${index}.dates.out`)}
