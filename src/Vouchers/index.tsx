@@ -3,6 +3,7 @@ import {
   Flex,
   Grid,
   NumberInput,
+  Text,
   TextInput,
   Title,
 } from '@mantine/core'
@@ -153,10 +154,19 @@ function Vouchers() {
           ))}
 
           <Grid.Col>
-            <Flex direction="row-reverse">
+            <Flex
+              direction="row-reverse"
+              justify="space-between"
+              align="center"
+            >
               <Button type="submit" variant="gradient" loading={isGenerating}>
                 Genera voucher
               </Button>
+              {!form.isValid() && (
+                <Text c="red" size="sm" fw="bold">
+                  Sono presenti errori nel form, controlla prima di proseguire.
+                </Text>
+              )}
             </Flex>
           </Grid.Col>
         </Grid>
