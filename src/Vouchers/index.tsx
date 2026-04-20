@@ -3,6 +3,7 @@ import {
   Flex,
   Grid,
   NumberInput,
+  Text,
   TextInput,
   Title,
 } from '@mantine/core'
@@ -10,7 +11,7 @@ import { downloadBuffer, generateVoucher } from './lib'
 import { useForm } from '@mantine/form'
 import { zod4Resolver } from 'mantine-form-zod-resolver'
 import dayjs from 'dayjs'
-import { DateInput } from '@mantine/dates'
+import { DatePickerInput } from '@mantine/dates'
 import TourLegForm from './TourLegForm'
 import { schema, tourLegs, type FormValues } from './schema'
 import { useMemo, useState } from 'react'
@@ -94,7 +95,8 @@ function Vouchers() {
           }}
         >
           <Grid.Col span={6}>
-            <DateInput
+            <DatePickerInput
+              dropdownType="modal"
               label="Date di inizio"
               placeholder="Seleziona data di inizio"
               valueFormat="DD/MM/YYYY"
@@ -105,7 +107,8 @@ function Vouchers() {
             />
           </Grid.Col>
           <Grid.Col span={6}>
-            <DateInput
+            <DatePickerInput
+              dropdownType="modal"
               label="Data di fine"
               placeholder="Seleziona data di fine"
               valueFormat="DD/MM/YYYY"
@@ -151,10 +154,19 @@ function Vouchers() {
           ))}
 
           <Grid.Col>
-            <Flex direction="row-reverse">
+            <Flex
+              direction="row-reverse"
+              justify="space-between"
+              align="center"
+            >
               <Button type="submit" variant="gradient" loading={isGenerating}>
                 Genera voucher
               </Button>
+              {!form.isValid() && (
+                <Text c="red" size="sm" fw="bold">
+                  Sono presenti errori nel form, controlla prima di proseguire.
+                </Text>
+              )}
             </Flex>
           </Grid.Col>
         </Grid>
