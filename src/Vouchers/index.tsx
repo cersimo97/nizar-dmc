@@ -3,6 +3,7 @@ import {
   Flex,
   Grid,
   NumberInput,
+  Stack,
   Text,
   TextInput,
   Title,
@@ -15,6 +16,9 @@ import { DatePickerInput } from '@mantine/dates'
 import TourLegForm from './TourLegForm'
 import { schema, tourLegs, type FormValues } from './schema'
 import { useMemo, useState } from 'react'
+import PDFVoucher from './PDFVoucher'
+import { pdf } from '@react-pdf/renderer'
+import { IconFileTypePdf, IconFileTypeXls } from '@tabler/icons-react'
 
 function Vouchers() {
   const [isGenerating, setIsGenerating] = useState(false)
@@ -56,11 +60,41 @@ function Vouchers() {
     validate: zod4Resolver(schema),
   })
 
-  const handleSubmit = async (data: FormValues) => {
+  const downloadPdf = async (data: FormValues) => {
+    // 1. Generate the PDF blob
+    const blob = await pdf(<PDFVoucher data={data} />).toBlob()
+
+    // 2. Create an object URL
+    const url = URL.createObjectURL(blob)
+
+    // 3. Create the anchor element
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'voucher.pdf'
+
+    // 4. Trigger download and cleanup
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleSubmitXLSX = async (data: FormValues) => {
     setIsGenerating(true)
     try {
       const buffer = await generateVoucher(data)
       downloadBuffer(buffer)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const handleSubmitPDF = async (data: FormValues) => {
+    setIsGenerating(true)
+    try {
+      await downloadPdf(data)
     } catch (err) {
       console.error(err)
     } finally {
@@ -86,7 +120,19 @@ function Vouchers() {
       <Title order={2} style={{ textAlign: 'center' }}>
         Genera voucher
       </Title>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form
+        onSubmit={form.onSubmit((values, event) => {
+          const submitter = (event?.nativeEvent as SubmitEvent)
+            ?.submitter as HTMLButtonElement | null
+          const action = submitter?.value
+
+          if (action === 'xlsx') {
+            handleSubmitXLSX(values)
+          } else if (action === 'pdf') {
+            handleSubmitPDF(values)
+          }
+        })}
+      >
         <Grid
           style={{
             margin: '1rem auto',
@@ -159,9 +205,26 @@ function Vouchers() {
               justify="space-between"
               align="center"
             >
-              <Button type="submit" variant="gradient" loading={isGenerating}>
-                Genera voucher
-              </Button>
+              <Stack>
+                <Button
+                  type="submit"
+                  variant="gradient"
+                  loading={isGenerating}
+                  leftSection={<IconFileTypeXls />}
+                  value="xlsx"
+                >
+                  Genera XLSX
+                </Button>
+                <Button
+                  type="submit"
+                  variant="gradient"
+                  loading={isGenerating}
+                  leftSection={<IconFileTypePdf />}
+                  value="pdf"
+                >
+                  Genera PDF
+                </Button>
+              </Stack>
               {!form.isValid() && (
                 <Text c="red" size="sm" fw="bold">
                   Sono presenti errori nel form, controlla prima di proseguire.
