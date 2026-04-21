@@ -2,24 +2,10 @@ import ExcelJs from 'exceljs'
 import kyunLogo from './assets/kyunkyun-logo.jpg'
 import sivolaLogo from './assets/sivola-logo.jpg'
 import type { FormValues } from './schema'
-
-const emergencyContacts = [
-  { name: 'NIZAR', tel: '+39 366 729 0133' },
-  { name: 'YOUSSEF', tel: '+212 69 015 0816' },
-]
+import { emergencyContacts } from './data'
+import { writeRoomDistribution } from './utils'
 
 const MAX_ROWS_PER_PAGE = 54
-
-function writeRoomDistribution({ qdp, trp, dbl, sgl }: Record<string, number>) {
-  const qdpText = qdp ? `${qdp} QDP` : null
-  const trpText = trp ? `${trp} TRP` : null
-  const dblText = dbl ? `${dbl} DBL` : null
-  const sglText = sgl ? `${sgl} SGL` : null
-
-  return [qdpText, trpText, dblText, sglText]
-    .filter(f => f !== null)
-    .join(' + ')
-}
 
 const COLORS = {
   YELLOW: 'FFFFDC5A',
