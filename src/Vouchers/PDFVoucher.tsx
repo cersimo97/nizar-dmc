@@ -173,6 +173,39 @@ function PDFVoucher({ data }: { data: FormValues }) {
             <TourTable t={t} coupon={data.coupon} />
           </View>
         ))}
+
+        {/* Numero di pagina */}
+        <View
+          style={{
+            padding: `10 ${PADDING_VALUE}`,
+            position: 'absolute',
+            bottom: 10,
+            left: 0,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+          fixed
+        >
+          <Text style={{ textAlign: 'center', fontSize: 8 }}>
+            Kyun Kyun Morocco Tour -{' '}
+            <Text style={{ fontStyle: 'italic' }}>
+              Voucher {dayjs(data.dates.from).format('DD/MM/YYYY')}-
+              {dayjs(data.dates.to).format('DD/MM/YYYY')} ({data.numPax} PAX)
+            </Text>
+          </Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 8,
+            }}
+            render={({ pageNumber, totalPages }) =>
+              `${pageNumber} / ${totalPages}`
+            }
+          />
+        </View>
       </Page>
     </Document>
   )
