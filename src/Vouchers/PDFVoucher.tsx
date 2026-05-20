@@ -125,8 +125,8 @@ function TourTable({
 function PDFVoucher({ data }: { data: FormValues }) {
   return (
     <Document
-      author="KYUN KYUN MOROCCO TOUR"
-      creator="KYUN KYUN MOROCCO TOUR"
+      author="KYUN KYUN MOROCCO TOURS"
+      creator="KYUN KYUN MOROCCO TOURS"
       title={`VOUCHER - ${dayjs(data.dates.from).format('DD_MM_YYYY')} ${dayjs(data.dates.to).format('DD_MM_YYYY')} - ${data.numPax} PAX`}
     >
       <Page size="A4" style={styles.page}>

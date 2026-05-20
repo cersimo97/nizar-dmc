@@ -1,10 +1,11 @@
 import { Button, Flex, Group, Title } from '@mantine/core'
-import { IconFileTypeXls, IconHome } from '@tabler/icons-react'
+import { IconFileTypeXls, IconHome, IconReceipt } from '@tabler/icons-react'
 import { Link } from 'react-router'
 
 const navMenuItems = [
   { label: 'Home', Icon: IconHome, url: '/' },
   { label: 'Vouchers', Icon: IconFileTypeXls, url: '/vouchers' },
+  { label: 'Fatture', Icon: IconReceipt, url: '/receipts' },
 ]
 
 function Header() {
