@@ -111,15 +111,20 @@ export default function Receipts() {
     ).toBlob()
     const url = URL.createObjectURL(blob)
 
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `PROFORMA B2B72 ${receiptCode}.pdf`
-    document.body.appendChild(a)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
 
-    a.click()
+    if (isIOS) {
+      window.open(url, '_blank')
+    } else {
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `PROFORMA B2B72 ${receiptCode}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    }
 
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
   return (
