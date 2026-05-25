@@ -11,6 +11,7 @@ import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import kyunLogo from '../Vouchers/assets/kyunkyun-logo.jpg'
 import bankLogo from './assets/bank_logo.jpeg'
+import { BANK_DETAILS, BUSINESS_INFO } from './const'
 
 const PADDING_VALUE = 24
 
@@ -193,10 +194,8 @@ export default function PDFReceipt({
           <Text style={{ color: 'grey', marginBottom: '1rem' }}>
             Relevé d'Identité Bancarie
           </Text>
-          <Text style={{ fontWeight: 'bold' }}>BE IN MAGHREB</Text>
-          <Text>DAR AL MOUKAWIL</Text>
-          <Text>MARRAKECH KOUTOUBIA</Text>
-          <Text>PLACE JAMAA LAFNA, MEDINA MARRAKECH</Text>
+          <Text style={{ fontWeight: 'bold' }}>{BUSINESS_INFO.name}</Text>
+          <Text>{BANK_DETAILS.agency}</Text>
 
           <Text style={{ color: 'grey', marginBottom: '1rem' }}>
             Références Bancaires
@@ -245,22 +244,22 @@ export default function PDFReceipt({
               <Text
                 style={[styles.bankCell, styles.bankCellBody, { width: '20%' }]}
               >
-                XXX
+                {BANK_DETAILS.bankCode}
               </Text>
               <Text
                 style={[styles.bankCell, styles.bankCellBody, { width: '20%' }]}
               >
-                XXX
+                {BANK_DETAILS.villeCode}
               </Text>
               <Text
                 style={[styles.bankCell, styles.bankCellBody, { width: '40%' }]}
               >
-                XXXXXXXXXXXXXXXX
+                {BANK_DETAILS.ccNumber}
               </Text>
               <Text
                 style={[styles.bankCell, styles.bankCellBody, { width: '20%' }]}
               >
-                XX
+                {BANK_DETAILS.rib}
               </Text>
             </View>
             <View style={styles.row}>
@@ -270,7 +269,7 @@ export default function PDFReceipt({
                   { width: '100%', paddingLeft: '2rem' },
                 ]}
               >
-                CODE SWIFT: BCMAMAMC
+                CODE SWIFT: {BANK_DETAILS.swift}
               </Text>
             </View>
           </View>
@@ -322,17 +321,14 @@ export default function PDFReceipt({
         {/* FOOTER */}
         <View style={styles.footer}>
           <Text style={[styles.footerText, { fontSize: 8 }]}>
-            BE IN MAGHREB / ICE: 003351299000019
+            {BUSINESS_INFO.name} / ICE: {BUSINESS_INFO.ice}
           </Text>
+          <Text style={styles.footerText}>{BUSINESS_INFO.address}</Text>
           <Text style={styles.footerText}>
-            RUE Atlas IMM 45, 4ème ETAGE N° 16 MAARIF CASABLANCA, MOROCCO
+            Mobile 1: {BUSINESS_INFO.mobile_1} Mobile 2:{' '}
+            {BUSINESS_INFO.mobile_2}
           </Text>
-          <Text style={styles.footerText}>
-            Fix: +212 524 370 643 Mobile 1: +212661828251 Mobile 2: +21661685568
-          </Text>
-          <Text style={styles.footerText}>
-            Office: contact@beinmorocco.net website: WEBSITE
-          </Text>
+          <Text style={styles.footerText}>Office: {BUSINESS_INFO.email}</Text>
         </View>
       </Page>
     </Document>
