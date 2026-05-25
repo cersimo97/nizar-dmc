@@ -293,14 +293,16 @@ export default function PDFReceipt({
                 style: 'currency',
                 currency: 'EUR',
                 currencyDisplay: 'code',
-              }).format(paymentDetails.advance.amount)}
+              }).format(data.tour.split ? paymentDetails.advance.amount : 0)}
             </Text>
             <Text style={[styles.cell, { width: '50%' }]}>
               {Intl.NumberFormat('it-IT', {
                 style: 'currency',
                 currency: 'EUR',
                 currencyDisplay: 'code',
-              }).format(paymentDetails.final.amount)}
+              }).format(
+                data.tour.split ? paymentDetails.final.amount : data.tour.amount
+              )}
             </Text>
           </View>
         </View>
@@ -328,7 +330,7 @@ export default function PDFReceipt({
             Mobile 1: {BUSINESS_INFO.mobile_1} Mobile 2:{' '}
             {BUSINESS_INFO.mobile_2}
           </Text>
-          <Text style={styles.footerText}>Office: {BUSINESS_INFO.email}</Text>
+          <Text style={styles.footerText}>E-mail: {BUSINESS_INFO.email}</Text>
         </View>
       </Page>
     </Document>

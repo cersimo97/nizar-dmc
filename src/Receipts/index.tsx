@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   FileInput,
   Flex,
   Grid,
@@ -44,6 +45,7 @@ const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
       .typeError('Il costo deve essere un numero')
       .required('Inserisci il costo del viaggio')
       .min(0, 'Il costo non può essere negativo'),
+    split: yup.boolean(),
   }),
 })
 
@@ -62,6 +64,7 @@ export default function Receipts() {
       tour: {
         type: 'standard',
         amount: 10200,
+        split: true,
       },
     },
     resolver: yupResolver(schema),
@@ -231,6 +234,20 @@ export default function Receipts() {
                       leftSection={<IconCurrencyEuro />}
                       min={0}
                       error={error?.message}
+                    />
+                  )}
+                />
+              </Grid.Col>
+              <Grid.Col>
+                <Controller
+                  control={control}
+                  name="tour.split"
+                  render={({ field }) => (
+                    <Checkbox
+                      checked={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      label="Dividi spesa (acconto e saldo)"
                     />
                   )}
                 />

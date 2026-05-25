@@ -7,5 +7,6 @@ export type ReceiptFormValues = {
   tour: {
     type: TourType
     amount: number
+    split?: boolean
   }
 }
