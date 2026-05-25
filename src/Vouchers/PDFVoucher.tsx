@@ -12,6 +12,7 @@ import sivolaLogo from './assets/sivola-logo.jpg'
 import { writeRoomDistribution } from './utils'
 import { emergencyContacts } from './data'
 import dayjs from 'dayjs'
+import { BUSINESS_INFO } from '../Receipts/const'
 
 const PADDING_VALUE = 24
 
@@ -59,13 +60,7 @@ const styles = StyleSheet.create({
   },
 })
 
-function TourTable({
-  t,
-  coupon,
-}: {
-  t: FormValues['tour'][number]
-  coupon: string
-}) {
+function TourTable({ t }: { t: FormValues['tour'][number] }) {
   return (
     <>
       <View style={styles.table}>
@@ -97,10 +92,6 @@ function TourTable({
           <Text style={[styles.cell, styles.col2]}>
             {writeRoomDistribution(t.hotel.rooms)}
           </Text>
-        </View>
-        <View style={[styles.row, { borderBottom: '1px solid #EEEEEE' }]}>
-          <Text style={[styles.cell, styles.col1]}>CODICE PRENOTAZIONE</Text>
-          <Text style={[styles.cell, styles.col2]}>{coupon}</Text>
         </View>
         <View style={styles.row}>
           <Text style={[styles.cell, styles.col1]}>TRATTAMENTO</Text>
@@ -153,6 +144,7 @@ function PDFVoucher({ data }: { data: FormValues }) {
             </Text>
           ))}
         </View>
+
         {/* LOGHI */}
         <View style={styles.row}>
           <Image src={kyunLogo} style={{ width: 120 }} />
@@ -160,17 +152,20 @@ function PDFVoucher({ data }: { data: FormValues }) {
         <View style={{ margin: '20 auto 5 auto' }}>
           <Image src={sivolaLogo} style={{ width: 100 }} />
         </View>
+
         {/* HEADER */}
         <Text style={styles.header}>
-          {`${data.dates.from.toLocaleDateString('it-IT')} - ${data.dates.to.toLocaleDateString('it-IT')} — ${data.numPax} PAX`}
+          {`${data.dates.from.toLocaleDateString('it-IT')} - ${data.dates.to.toLocaleDateString('it-IT')} — ${data.numPax - 2} PAX + 1 TL`}
         </Text>
+
         {/* TOUR LEADER */}
-        <Text style={styles.sectionTitle}>TOUR LEADER</Text>
-        <Text>{data.tourLeader.name}</Text>
+        <Text style={styles.sectionTitle}>CODICE PRENOTAZIONE</Text>
+        <Text>{data.coupon}</Text>
+
         {/* TOUR TABLES */}
         {data.tour.map((t, i) => (
           <View key={i} style={{ marginTop: 10 }} wrap={false}>
-            <TourTable t={t} coupon={data.coupon} />
+            <TourTable t={t} />
           </View>
         ))}
 
@@ -190,10 +185,11 @@ function PDFVoucher({ data }: { data: FormValues }) {
           fixed
         >
           <Text style={{ textAlign: 'center', fontSize: 8 }}>
-            Kyun Kyun Morocco Tour -{' '}
+            {BUSINESS_INFO.name} -{' '}
             <Text style={{ fontStyle: 'italic' }}>
               Voucher {dayjs(data.dates.from).format('DD/MM/YYYY')}-
-              {dayjs(data.dates.to).format('DD/MM/YYYY')} ({data.numPax} PAX)
+              {dayjs(data.dates.to).format('DD/MM/YYYY')} ({data.numPax - 2} PAX
+              + 1 TL)
             </Text>
           </Text>
           <Text

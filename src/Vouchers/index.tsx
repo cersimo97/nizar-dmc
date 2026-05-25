@@ -182,7 +182,7 @@ function Vouchers() {
               {...form.getInputProps('numPax')}
             />
           </Grid.Col>
-          <Grid.Col>
+          {/* <Grid.Col>
             <Title order={4}>Tour Leader</Title>
           </Grid.Col>
           <Grid.Col span={6}>
@@ -191,7 +191,7 @@ function Vouchers() {
               {...form.getInputProps('tourLeader.name')}
             />
           </Grid.Col>
-          <Grid.Col span={6} />
+          <Grid.Col span={6} /> */}
           <Grid.Col>
             <Title order={3}>Tappe</Title>
           </Grid.Col>
