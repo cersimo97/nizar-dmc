@@ -8,7 +8,6 @@ import {
   Grid,
   NumberInput,
   Select,
-  Stack,
   Text,
   Title,
 } from '@mantine/core'
@@ -19,13 +18,12 @@ import { DatePickerInput } from '@mantine/dates'
 import { useEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import {
-  IconAlertTriangle,
   IconCurrencyEuro,
   IconFileTypePdf,
   IconInfoCircle,
 } from '@tabler/icons-react'
 import type { ReceiptFormValues, TourType } from './types'
-import { pdf, PDFViewer } from '@react-pdf/renderer'
+import { pdf } from '@react-pdf/renderer'
 import PDFReceipt from './PDFReceipt'
 
 const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
@@ -52,11 +50,7 @@ const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
 export default function Receipts() {
   const [imageFile, setImageFile] = useState<File | null>(null)
 
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid },
-  } = useForm<ReceiptFormValues>({
+  const { control, handleSubmit } = useForm<ReceiptFormValues>({
     defaultValues: {
       receiptDate: new Date(),
       startDate: new Date(),
@@ -68,10 +62,6 @@ export default function Receipts() {
       },
     },
     resolver: yupResolver(schema),
-  })
-
-  const formData = useWatch({
-    control,
   })
 
   const startDate = useWatch({
@@ -132,170 +122,132 @@ export default function Receipts() {
     >
       <Title order={2}>Genera fattura</Title>
 
-      <Grid>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid>
-              <Grid.Col>
-                <FileInput
-                  label="File immagine"
-                  description="L'immagine del logo che compare in alto nella fattura"
-                  accept="image/jpeg,image/png"
-                  value={imageFile}
-                  onChange={f => setImageFile(f)}
-                  clearable
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid>
+          <Grid.Col>
+            <FileInput
+              label="File immagine"
+              description="L'immagine del logo che compare in alto nella fattura"
+              accept="image/jpeg,image/png"
+              value={imageFile}
+              onChange={f => setImageFile(f)}
+              clearable
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <Controller
+              control={control}
+              name="receiptDate"
+              render={({ field, fieldState: { error } }) => (
+                <DatePickerInput
+                  {...field}
+                  label="Data fattura"
+                  error={error?.message}
+                  valueFormat="DD/MM/YYYY"
                 />
-              </Grid.Col>
-              <Grid.Col span={8}>
-                <Controller
-                  control={control}
-                  name="receiptDate"
-                  render={({ field, fieldState: { error } }) => (
-                    <DatePickerInput
-                      {...field}
-                      label="Data fattura"
-                      error={error?.message}
-                      valueFormat="DD/MM/YYYY"
-                    />
-                  )}
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Controller
+              control={control}
+              name="progressiveNumber"
+              render={({ field, fieldState: { error } }) => (
+                <NumberInput
+                  {...field}
+                  label="Numero progressivo"
+                  error={error?.message}
                 />
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Controller
-                  control={control}
-                  name="progressiveNumber"
-                  render={({ field, fieldState: { error } }) => (
-                    <NumberInput
-                      {...field}
-                      label="Numero progressivo"
-                      error={error?.message}
-                    />
-                  )}
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col>
+            <Controller
+              control={control}
+              name="startDate"
+              render={({ field, fieldState: { error } }) => (
+                <DatePickerInput
+                  {...field}
+                  label="Data inizio viaggio"
+                  error={error?.message}
+                  valueFormat="DD/MM/YYYY"
                 />
-              </Grid.Col>
-              <Grid.Col>
-                <Controller
-                  control={control}
-                  name="startDate"
-                  render={({ field, fieldState: { error } }) => (
-                    <DatePickerInput
-                      {...field}
-                      label="Data inizio viaggio"
-                      error={error?.message}
-                      valueFormat="DD/MM/YYYY"
-                    />
-                  )}
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col>
+            {Number.isFinite(progressiveNumber) && !!startDate && (
+              <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
+                <Text>
+                  Il codice della fattura sarà:{' '}
+                  <Text component="span" c="blue" ff="monospace" fw="bold">
+                    {receiptCode}
+                  </Text>
+                </Text>
+              </Alert>
+            )}
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <Controller
+              control={control}
+              name="tour.type"
+              render={({ field, fieldState: { error } }) => (
+                <Select
+                  {...field}
+                  label="Tipo di viaggio"
+                  data={[
+                    {
+                      value: 'standard',
+                      label: 'Viaggio di gruppo: BIG TOUR',
+                    },
+                    {
+                      value: 'surf',
+                      label: 'Viaggio di gruppo: SURF & SOUND',
+                    },
+                  ]}
+                  error={error?.message}
                 />
-              </Grid.Col>
-              <Grid.Col>
-                {Number.isFinite(progressiveNumber) && !!startDate && (
-                  <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
-                    <Text>
-                      Il codice della fattura sarà:{' '}
-                      <Text component="span" c="blue" ff="monospace" fw="bold">
-                        {receiptCode}
-                      </Text>
-                    </Text>
-                  </Alert>
-                )}
-              </Grid.Col>
-              <Grid.Col span={8}>
-                <Controller
-                  control={control}
-                  name="tour.type"
-                  render={({ field, fieldState: { error } }) => (
-                    <Select
-                      {...field}
-                      label="Tipo di viaggio"
-                      data={[
-                        {
-                          value: 'standard',
-                          label: 'Viaggio di gruppo: BIG TOUR',
-                        },
-                        {
-                          value: 'surf',
-                          label: 'Viaggio di gruppo: SURF & SOUND',
-                        },
-                      ]}
-                      error={error?.message}
-                    />
-                  )}
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Controller
+              control={control}
+              name="tour.amount"
+              render={({ field, fieldState: { error } }) => (
+                <NumberInput
+                  {...field}
+                  label="Costo viaggio"
+                  leftSection={<IconCurrencyEuro />}
+                  min={0}
+                  error={error?.message}
                 />
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Controller
-                  control={control}
-                  name="tour.amount"
-                  render={({ field, fieldState: { error } }) => (
-                    <NumberInput
-                      {...field}
-                      label="Costo viaggio"
-                      leftSection={<IconCurrencyEuro />}
-                      min={0}
-                      error={error?.message}
-                    />
-                  )}
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col>
+            <Controller
+              control={control}
+              name="tour.split"
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  label="Dividi spesa (acconto e saldo)"
                 />
-              </Grid.Col>
-              <Grid.Col>
-                <Controller
-                  control={control}
-                  name="tour.split"
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={field.value}
-                      onChange={field.onChange}
-                      onBlur={field.onBlur}
-                      label="Dividi spesa (acconto e saldo)"
-                    />
-                  )}
-                />
-              </Grid.Col>
-              <Grid.Col>
-                <Flex direction="row-reverse">
-                  <Button type="submit" leftSection={<IconFileTypePdf />}>
-                    Genera fattura
-                  </Button>
-                </Flex>
-              </Grid.Col>
-            </Grid>
-          </form>
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          {isValid ? (
-            <PDFViewer width="100%" height="100%">
-              <PDFReceipt
-                data={formData as ReceiptFormValues}
-                imageUrl={imageUrl}
-              />
-            </PDFViewer>
-          ) : (
-            <Stack
-              w="100%"
-              h="100%"
-              justify="center"
-              align="center"
-              bdrs="sm"
-              bd="2px dashed red"
-              gap="sm"
-            >
-              <IconAlertTriangle color="red" size={'4rem'} />
-              <Text
-                c="red"
-                fz="xl"
-                fw="bold"
-                ta="center"
-                style={{ lineHeight: '100%' }}
-              >
-                Form non valido
-              </Text>
-              <Text c="red" ta="center" fz="sm" style={{ lineHeight: '100%' }}>
-                Impossibile produrre l'anteprima
-              </Text>
-            </Stack>
-          )}
-        </Grid.Col>
-      </Grid>
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col>
+            <Flex direction="row-reverse">
+              <Button type="submit" leftSection={<IconFileTypePdf />}>
+                Genera fattura
+              </Button>
+            </Flex>
+          </Grid.Col>
+        </Grid>
+      </form>
     </Box>
   )
 }
