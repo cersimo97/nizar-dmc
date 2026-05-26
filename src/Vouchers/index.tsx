@@ -70,7 +70,7 @@ function Vouchers() {
     // 3. Create the anchor element
     const link = document.createElement('a')
     link.href = url
-    link.download = 'voucher.pdf'
+    link.download = `VOUCHER SIVOLA ${dayjs(data.dates.from).format('DDMMYY')}.pdf`
 
     // 4. Trigger download and cleanup
     document.body.appendChild(link)
