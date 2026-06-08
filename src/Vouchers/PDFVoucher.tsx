@@ -7,7 +7,7 @@ import {
   View,
 } from '@react-pdf/renderer'
 import type { FormValues } from './schema'
-import kyunLogo from './assets/kyunkyun-logo.jpg'
+import kyunLogo from '@images/logo.png'
 import sivolaLogo from './assets/sivola-logo.jpg'
 import { writeRoomDistribution } from './utils'
 import { emergencyContacts } from './data'
@@ -147,7 +147,7 @@ function PDFVoucher({ data }: { data: FormValues }) {
 
         {/* LOGHI */}
         <View style={styles.row}>
-          <Image src={kyunLogo} style={{ width: 120 }} />
+          <Image src={kyunLogo} style={{ height: 120 }} />
         </View>
         <View style={{ margin: '20 auto 5 auto' }}>
           <Image src={sivolaLogo} style={{ width: 100 }} />

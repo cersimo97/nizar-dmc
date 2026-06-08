@@ -1,5 +1,5 @@
 import ExcelJs from 'exceljs'
-import kyunLogo from './assets/kyunkyun-logo.jpg'
+import kyunLogo from '@images/logo.png'
 import sivolaLogo from './assets/sivola-logo.jpg'
 import type { FormValues } from './schema'
 import { emergencyContacts } from './data'
