@@ -106,7 +106,7 @@ function Vouchers() {
   // when changing startDate
   form.watch('dates.from', ({ value }) => {
     const tl = form.getValues().tour.length
-    let currentDate = value
+    let currentDate = value as Date
     for (let i = 0; i < tl; i++) {
       form.setFieldValue(`tour.${i}.dates.in`, currentDate)
       currentDate = dayjs(currentDate).add(1, 'day').toDate()
