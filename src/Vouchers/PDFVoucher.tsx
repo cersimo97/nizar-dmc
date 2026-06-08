@@ -16,6 +16,10 @@ import { BUSINESS_INFO } from '../Receipts/const'
 
 const PADDING_VALUE = 24
 
+const COLORS = {
+  YELLOW: '#edaf1d',
+}
+
 const styles = StyleSheet.create({
   page: {
     padding: PADDING_VALUE,
@@ -34,7 +38,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     marginVertical: 8,
-    backgroundColor: '#FFDC5A',
+    backgroundColor: COLORS.YELLOW,
   },
 
   sectionTitle: {
@@ -52,7 +56,7 @@ const styles = StyleSheet.create({
   },
   bottomRow: {
     padding: 4,
-    backgroundColor: '#FFDC5A',
+    backgroundColor: COLORS.YELLOW,
   },
   emergencyContactsText: {
     textAlign: 'center',
@@ -128,7 +132,7 @@ function PDFVoucher({ data }: { data: FormValues }) {
             top: PADDING_VALUE,
             right: PADDING_VALUE,
             border: '1px solid black',
-            backgroundColor: '#FFDC5A',
+            backgroundColor: COLORS.YELLOW,
             padding: 18,
             display: 'flex',
             flexDirection: 'column',

@@ -8,7 +8,7 @@ import { writeRoomDistribution } from './utils'
 const MAX_ROWS_PER_PAGE = 54
 
 const COLORS = {
-  YELLOW: 'FFFFDC5A',
+  YELLOW: 'ffedaf1d',
 }
 
 const YELLOW_FILL = {
