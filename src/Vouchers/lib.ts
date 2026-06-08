@@ -1,5 +1,5 @@
 import ExcelJs from 'exceljs'
-import kyunLogo from '@images/logo.png'
+import kyunLogo from '@images/logotipo.png'
 import sivolaLogo from './assets/sivola-logo.jpg'
 import type { FormValues } from './schema'
 import { emergencyContacts } from './data'
@@ -223,7 +223,7 @@ export async function generateVoucher(data: FormValues) {
   sheet.columns = [{ width: 28 }, { width: 38 }, { width: 32 }]
 
   // Import KyunKyun logo image
-  await addImage(workbook, sheet, kyunLogo, 'A1:A6')
+  await addImage(workbook, sheet, kyunLogo, 'A1:A4')
 
   // Import SiVola logo image
   await addImage(workbook, sheet, sivolaLogo, 'B8:B11')
