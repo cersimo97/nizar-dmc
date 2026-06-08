@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Checkbox,
-  FileInput,
   Flex,
   Grid,
   NumberInput,
@@ -15,7 +14,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { DatePickerInput } from '@mantine/dates'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import {
   IconCurrencyEuro,
@@ -25,6 +24,7 @@ import {
 import type { ReceiptFormValues, TourType } from './types'
 import { pdf } from '@react-pdf/renderer'
 import PDFReceipt from './PDFReceipt'
+import { notifications } from '@mantine/notifications'
 
 const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
   receiptDate: yup.date().required('Inserisci la data della fattura'),
@@ -48,8 +48,7 @@ const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
 })
 
 export default function Receipts() {
-  const [imageFile, setImageFile] = useState<File | null>(null)
-
+  const [loading, setLoading] = useState(false)
   const { control, handleSubmit } = useForm<ReceiptFormValues>({
     defaultValues: {
       receiptDate: new Date(),
@@ -80,35 +79,32 @@ export default function Receipts() {
     [startDate, progressiveNumber]
   )
 
-  const imageUrl = useMemo(() => {
-    if (!imageFile) return null
-
-    return URL.createObjectURL(imageFile)
-  }, [imageFile])
-
-  useEffect(() => {
-    return () => {
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl)
-      }
-    }
-  }, [imageUrl])
-
   const onSubmit = async (data: ReceiptFormValues) => {
-    const receiptCode = `KK${dayjs(data.startDate).format('DDMMYY')}${String(data.progressiveNumber).padStart(3, '0')}`
-    const blob = await pdf(
-      <PDFReceipt data={data} imageUrl={imageUrl} />
-    ).toBlob()
-    const url = URL.createObjectURL(blob)
+    setLoading(true)
 
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `PROFORMA B2B72 ${receiptCode}.pdf`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    try {
+      const receiptCode = `KK${dayjs(data.startDate).format('DDMMYY')}${String(data.progressiveNumber).padStart(3, '0')}`
+      const blob = await pdf(<PDFReceipt data={data} />).toBlob()
+      const url = URL.createObjectURL(blob)
 
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `PROFORMA B2B72 ${receiptCode}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+    } catch (err) {
+      console.error(err)
+      notifications.show({
+        title: 'Errore fattura',
+        message: 'Non è stato possibile generare la fattura',
+        color: 'red',
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -124,16 +120,6 @@ export default function Receipts() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid>
-          <Grid.Col>
-            <FileInput
-              label="File immagine"
-              description="L'immagine del logo che compare in alto nella fattura"
-              accept="image/jpeg,image/png"
-              value={imageFile}
-              onChange={f => setImageFile(f)}
-              clearable
-            />
-          </Grid.Col>
           <Grid.Col span={8}>
             <Controller
               control={control}
@@ -241,7 +227,11 @@ export default function Receipts() {
           </Grid.Col>
           <Grid.Col>
             <Flex direction="row-reverse">
-              <Button type="submit" leftSection={<IconFileTypePdf />}>
+              <Button
+                type="submit"
+                leftSection={<IconFileTypePdf />}
+                loading={loading}
+              >
                 Genera fattura
               </Button>
             </Flex>

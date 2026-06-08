@@ -9,7 +9,7 @@ import {
 import type { ReceiptFormValues } from './types'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
-import kyunLogo from '../Vouchers/assets/kyunkyun-logo.jpg'
+import kyunLogo from '@images/logo.png'
 import bankLogo from './assets/bank_logo.jpeg'
 import { BANK_DETAILS, BUSINESS_INFO } from './const'
 
@@ -86,13 +86,7 @@ const styles = StyleSheet.create({
   footerText: { textAlign: 'center', fontSize: 9 },
 })
 
-export default function PDFReceipt({
-  data,
-  imageUrl,
-}: {
-  data: ReceiptFormValues
-  imageUrl: string | null
-}) {
+export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
   const receiptCode = useMemo(
     () =>
       `KK${dayjs(data.startDate).format('DDMMYY')}${String(data.progressiveNumber).padStart(3, '0')}`,
@@ -121,7 +115,7 @@ export default function PDFReceipt({
     >
       <Page size="A4" style={styles.page}>
         <Image
-          src={imageUrl ?? kyunLogo}
+          src={kyunLogo}
           style={{ width: 120, marginHorizontal: 'auto' }}
         />
         <Text
