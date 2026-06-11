@@ -53,7 +53,7 @@ export default function Receipts() {
     defaultValues: {
       receiptDate: new Date(),
       startDate: new Date(),
-      progressiveNumber: 0,
+      progressiveNumber: 1,
       tour: {
         type: 'standard',
         amount: 10200,
@@ -75,7 +75,7 @@ export default function Receipts() {
 
   const receiptCode = useMemo(
     () =>
-      `KK${dayjs(startDate).format('DDMMYY')}${String(progressiveNumber).padStart(3, '0')}`,
+      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate).year()}`,
     [startDate, progressiveNumber]
   )
 
@@ -83,13 +83,12 @@ export default function Receipts() {
     setLoading(true)
 
     try {
-      const receiptCode = `KK${dayjs(data.startDate).format('DDMMYY')}${String(data.progressiveNumber).padStart(3, '0')}`
       const blob = await pdf(<PDFReceipt data={data} />).toBlob()
       const url = URL.createObjectURL(blob)
 
       const a = document.createElement('a')
       a.href = url
-      a.download = `PROFORMA B2B72 ${receiptCode}.pdf`
+      a.download = `PROFORMA B2B72 ${receiptCode.replace('/', '-')}.pdf`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -184,11 +183,11 @@ export default function Receipts() {
                   data={[
                     {
                       value: 'standard',
-                      label: 'Viaggio di gruppo: BIG TOUR',
+                      label: 'Tour group: BIG TOUR',
                     },
                     {
                       value: 'surf',
-                      label: 'Viaggio di gruppo: SURF & SOUND',
+                      label: 'Tour group: SURF & SOUND',
                     },
                   ]}
                   error={error?.message}
