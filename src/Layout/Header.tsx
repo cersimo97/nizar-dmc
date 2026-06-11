@@ -5,7 +5,7 @@ import { Link } from 'react-router'
 const navMenuItems = [
   { label: 'Home', Icon: IconHome, url: '/' },
   { label: 'Vouchers', Icon: IconFileTypeXls, url: '/vouchers' },
-  { label: 'Fatture', Icon: IconReceipt, url: '/receipts' },
+  { label: 'Proforma', Icon: IconReceipt, url: '/receipts' },
 ]
 
 function Header() {

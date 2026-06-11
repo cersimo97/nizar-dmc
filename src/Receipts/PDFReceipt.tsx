@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
   const receiptCode = useMemo(
     () =>
-      `KK${dayjs(data.startDate).format('DDMMYY')}${String(data.progressiveNumber).padStart(3, '0')}`,
+      `${String(data.progressiveNumber).padStart(3, '0')}/${dayjs(data.startDate).year()}`,
     [data]
   )
 
@@ -152,7 +152,7 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
           {/* ROW */}
           <View style={styles.row}>
             <Text style={[styles.cell, styles.designation]}>
-              Viaggio di gruppo:{' '}
+              Tour group:{' '}
               {data.tour.type === 'standard' ? 'BIG TOUR' : 'SURF & SOUND'}
             </Text>
             <Text style={[styles.cell, styles.amount]}>
