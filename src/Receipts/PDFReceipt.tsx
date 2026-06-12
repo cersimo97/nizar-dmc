@@ -10,6 +10,7 @@ import type { ReceiptFormValues } from './types'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import kyunLogo from '@images/logo.png'
+import signature from '@images/timbro_firma.png'
 import bankLogo from './assets/bank_logo.jpeg'
 import { BANK_DETAILS, BUSINESS_INFO } from './const'
 
@@ -152,7 +153,6 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
           {/* ROW */}
           <View style={styles.row}>
             <Text style={[styles.cell, styles.designation]}>
-              Tour group:{' '}
               {data.tour.type === 'standard' ? 'BIG TOUR' : 'SURF & SOUND'}
             </Text>
             <Text style={[styles.cell, styles.amount]}>
@@ -308,11 +308,20 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
             fontSize: 9,
             textAlign: 'center',
             transform: 'translateX(50%)',
-            marginVertical: '3rem',
+            marginTop: '3rem',
+            marginBottom: '0.5rem',
           }}
         >
           Signature
         </Text>
+        <Image
+          src={signature}
+          style={{
+            width: 160,
+            marginHorizontal: 'auto',
+            transform: 'translateX(50%)',
+          }}
+        />
 
         {/* FOOTER */}
         <View style={styles.footer}>
