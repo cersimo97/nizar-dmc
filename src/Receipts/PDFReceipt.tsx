@@ -153,7 +153,8 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
           {/* ROW */}
           <View style={styles.row}>
             <Text style={[styles.cell, styles.designation]}>
-              {data.tour.type === 'standard' ? 'BIG TOUR' : 'SURF & SOUND'}
+              {data.tour.type === 'standard' ? 'BIG TOUR' : 'SURF & SOUND'} -{' '}
+              {dayjs(data.startDate).format('DDMMYY')}
             </Text>
             <Text style={[styles.cell, styles.amount]}>
               {Intl.NumberFormat('it-IT', {
@@ -264,6 +265,16 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
                 ]}
               >
                 CODE SWIFT: {BANK_DETAILS.swift}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text
+                style={[
+                  styles.bankCell,
+                  { width: '100%', paddingLeft: '2rem' },
+                ]}
+              >
+                IBAN: {BANK_DETAILS.iban}
               </Text>
             </View>
           </View>

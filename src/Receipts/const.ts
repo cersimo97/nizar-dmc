@@ -5,6 +5,7 @@ export const BANK_DETAILS = Object.freeze({
   villeCode: '270',
   ccNumber: '0000568000005096',
   rib: '68',
+  iban: 'MA64007270000056800000509668',
 })
 
 export const BUSINESS_INFO = Object.freeze({
