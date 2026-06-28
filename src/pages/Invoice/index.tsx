@@ -2,7 +2,6 @@ import {
   Alert,
   Box,
   Button,
-  Checkbox,
   Flex,
   Grid,
   NumberInput,
@@ -10,23 +9,25 @@ import {
   Text,
   Title,
 } from '@mantine/core'
-import { Controller, useForm, useWatch } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { DatePickerInput } from '@mantine/dates'
-import { useMemo, useState } from 'react'
-import dayjs from 'dayjs'
+import { notifications } from '@mantine/notifications'
 import {
   IconCurrencyEuro,
   IconFileTypePdf,
   IconInfoCircle,
 } from '@tabler/icons-react'
-import type { ReceiptFormValues, TourType } from './types'
+import { Controller, useForm, useWatch } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import type { InvoiceFormValues } from './types'
+import type { TourType } from '@/types/Tour'
+import { useMemo, useState } from 'react'
 import { pdf } from '@react-pdf/renderer'
-import PDFReceipt from './PDFReceipt'
-import { notifications } from '@mantine/notifications'
+import dayjs from 'dayjs'
+import PDFInvoice from './PDFInvoice'
+import { downloadFile } from '@/utils/download'
 
-const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
+const schema: yup.ObjectSchema<InvoiceFormValues> = yup.object().shape({
   receiptDate: yup.date().required('Inserisci la data della fattura'),
   startDate: yup.date().required('Inserisci la data di inizio viaggio'),
   progressiveNumber: yup
@@ -43,13 +44,12 @@ const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
       .typeError('Il costo deve essere un numero')
       .required('Inserisci il costo del viaggio')
       .min(0, 'Il costo non può essere negativo'),
-    split: yup.boolean(),
   }),
 })
 
-export default function Receipts() {
+export default function Invoice() {
   const [loading, setLoading] = useState(false)
-  const { control, handleSubmit } = useForm<ReceiptFormValues>({
+  const { control, handleSubmit } = useForm<InvoiceFormValues>({
     defaultValues: {
       receiptDate: new Date(),
       startDate: new Date(),
@@ -57,7 +57,6 @@ export default function Receipts() {
       tour: {
         type: 'standard',
         amount: 10200,
-        split: true,
       },
     },
     resolver: yupResolver(schema),
@@ -73,27 +72,18 @@ export default function Receipts() {
     name: 'progressiveNumber',
   })
 
-  const receiptCode = useMemo(
+  const receiptCode = useMemo<string>(
     () =>
       `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate).year()}`,
     [startDate, progressiveNumber]
   )
 
-  const onSubmit = async (data: ReceiptFormValues) => {
+  const onSubmit = async (data: InvoiceFormValues) => {
     setLoading(true)
 
     try {
-      const blob = await pdf(<PDFReceipt data={data} />).toBlob()
-      const url = URL.createObjectURL(blob)
-
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `PROFORMA B2B72 ${receiptCode.replace('/', '-')}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-
-      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      const blob = await pdf(<PDFInvoice data={data} />).toBlob()
+      downloadFile(blob, `INVOICE B2B72 ${receiptCode.replace('/', '-')}.pdf`)
     } catch (err) {
       console.error(err)
       notifications.show({
@@ -164,7 +154,7 @@ export default function Receipts() {
             {Number.isFinite(progressiveNumber) && !!startDate && (
               <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
                 <Text>
-                  Il codice della fattura sarà:{' '}
+                  Il numero progressivo della fattura sarà:{' '}
                   <Text component="span" c="blue" ff="monospace" fw="bold">
                     {receiptCode}
                   </Text>
@@ -206,20 +196,6 @@ export default function Receipts() {
                   leftSection={<IconCurrencyEuro />}
                   min={0}
                   error={error?.message}
-                />
-              )}
-            />
-          </Grid.Col>
-          <Grid.Col>
-            <Controller
-              control={control}
-              name="tour.split"
-              render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  label="Dividi spesa (acconto e saldo)"
                 />
               )}
             />

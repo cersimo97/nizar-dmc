@@ -9,10 +9,11 @@ import {
 import type { ReceiptFormValues } from './types'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
-import kyunLogo from '@images/logo.png'
-import signature from '@images/timbro_firma.png'
 import bankLogo from './assets/bank_logo.jpeg'
-import { BANK_DETAILS, BUSINESS_INFO } from './const'
+import { BANK_DETAILS, BUSINESS_INFO } from '../../const'
+import Header from '@/pdf/Header'
+import Signature from '@/pdf/Signature'
+import Footer from '@/pdf/Footer'
 
 const PADDING_VALUE = 24
 
@@ -75,19 +76,9 @@ const styles = StyleSheet.create({
   },
   bankCellHeader: { fontWeight: 'bold' },
   bankCellBody: { textAlign: 'right' },
-
-  footer: {
-    position: 'absolute',
-    bottom: 10,
-    left: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  footerText: { textAlign: 'center', fontSize: 9 },
 })
 
-export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
+export default function PDFProForma({ data }: { data: ReceiptFormValues }) {
   const receiptCode = useMemo(
     () =>
       `${String(data.progressiveNumber).padStart(3, '0')}/${dayjs(data.startDate).year()}`,
@@ -115,34 +106,11 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
       title={`PROFORMA B2B72 ${receiptCode}`}
     >
       <Page size="A4" style={styles.page}>
-        <Image
-          src={kyunLogo}
-          style={{ width: 120, marginHorizontal: 'auto' }}
+        <Header
+          invoiceCode={receiptCode}
+          invoiceDate={data.receiptDate}
+          isProforma
         />
-        <Text
-          textAnchor="end"
-          style={{
-            textAlign: 'right',
-          }}
-        >
-          Casablanca, {dayjs(data.receiptDate).format('DD/MM/YYYY')}
-        </Text>
-        <Text style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
-          RECIPIENT:
-        </Text>
-        <Text>B2B 72 SRL</Text>
-        <Text>VIA ORAZIO ANTINORI 6, 10128</Text>
-        <Text>TORINO</Text>
-        <Text
-          style={{
-            textAlign: 'center',
-            marginVertical: '2rem',
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-          }}
-        >
-          FACTURE PROFORMA N° {receiptCode}
-        </Text>
 
         <View style={styles.table}>
           {/* HEADER */}
@@ -313,39 +281,10 @@ export default function PDFReceipt({ data }: { data: ReceiptFormValues }) {
         </View>
 
         {/* SIGNATURE */}
-        <Text
-          style={{
-            fontWeight: 'bold',
-            fontSize: 9,
-            textAlign: 'center',
-            transform: 'translateX(50%)',
-            marginTop: '3rem',
-            marginBottom: '0.5rem',
-          }}
-        >
-          Signature
-        </Text>
-        <Image
-          src={signature}
-          style={{
-            width: 160,
-            marginHorizontal: 'auto',
-            transform: 'translateX(50%)',
-          }}
-        />
+        <Signature />
 
         {/* FOOTER */}
-        <View style={styles.footer}>
-          <Text style={[styles.footerText, { fontSize: 8 }]}>
-            {BUSINESS_INFO.name} / ICE: {BUSINESS_INFO.ice}
-          </Text>
-          <Text style={styles.footerText}>{BUSINESS_INFO.address}</Text>
-          <Text style={styles.footerText}>
-            Mobile 1: {BUSINESS_INFO.mobile_1} Mobile 2:{' '}
-            {BUSINESS_INFO.mobile_2}
-          </Text>
-          <Text style={styles.footerText}>E-mail: {BUSINESS_INFO.email}</Text>
-        </View>
+        <Footer />
       </Page>
     </Document>
   )

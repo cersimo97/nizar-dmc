@@ -17,13 +17,13 @@ import {
   Text,
   Title,
 } from '@mantine/core'
-import Block from '../Block'
+import Block from './Block'
 import { colord, extend } from 'colord'
 import a11yPlugin from 'colord/plugins/a11y'
 import randomColor from 'randomcolor'
 import { Link, useLoaderData } from 'react-router'
 import { fillBlocks, formatter } from './lib'
-import type loadResults from '../loaders/loadResults'
+import type loadResults from '../../loaders/loadResults'
 import { IconInfoCircle } from '@tabler/icons-react'
 
 extend([a11yPlugin])

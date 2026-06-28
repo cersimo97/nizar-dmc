@@ -12,7 +12,7 @@ import sivolaLogo from './assets/sivola-logo.jpg'
 import { writeRoomDistribution } from './utils'
 import { emergencyContacts } from './data'
 import dayjs from 'dayjs'
-import { BUSINESS_INFO } from '../Receipts/const'
+import { BUSINESS_INFO } from '../../const'
 
 const PADDING_VALUE = 24
 
