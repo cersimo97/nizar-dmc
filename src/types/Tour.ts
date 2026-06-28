@@ -4,3 +4,5 @@ export interface Tour {
   numPar: number
   assignedBus?: number
 }
+
+export type TourType = 'standard' | 'surf'

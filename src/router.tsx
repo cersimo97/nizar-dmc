@@ -5,7 +5,8 @@ import InputForm from './InputForm'
 import PlanningView from './PlanningView'
 import loadResults from './loaders/loadResults'
 import Vouchers from './Vouchers'
-import Receipts from './Receipts'
+import Proforma from './Proforma'
+import Invoice from './Invoice'
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,8 @@ const router = createBrowserRouter([
         loader: loadResults,
       },
       { path: 'vouchers', Component: Vouchers },
-      { path: 'receipts', Component: Receipts },
+      { path: 'proforma', Component: Proforma },
+      { path: 'invoice', Component: Invoice },
     ],
   },
 ])

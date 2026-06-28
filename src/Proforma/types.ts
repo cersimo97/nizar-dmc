@@ -1,4 +1,4 @@
-export type TourType = 'standard' | 'surf'
+import type { TourType } from '@/types/Tour'
 
 export type ReceiptFormValues = {
   receiptDate: Date
