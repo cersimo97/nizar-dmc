@@ -22,11 +22,11 @@ import {
 } from '@tabler/icons-react'
 import { randomId } from '@mantine/hooks'
 import { parse } from 'date-fns'
-import type { Tour } from './types/Tour'
+import type { Tour } from '../../types/Tour'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useLoaderData, useNavigate } from 'react-router'
-import { assignBuses } from './lib/calc'
-import loadResults from './loaders/loadResults'
+import { assignBuses } from '../../lib/calc'
+import loadResults from '../../loaders/loadResults'
 
 type FormValue = {
   tours: {
@@ -116,7 +116,7 @@ function SortableItem({ index }: { index: number }) {
   )
 }
 
-function InputForm() {
+function BusInputForm() {
   const { results } = useLoaderData<typeof loadResults>()
   const navigate = useNavigate()
   const [parent] = useAutoAnimate()
@@ -242,4 +242,4 @@ function InputForm() {
   )
 }
 
-export default InputForm
+export default BusInputForm

@@ -11,7 +11,7 @@ import {
   ThemeIcon,
 } from '@mantine/core'
 import { Link, useLoaderData, useNavigate } from 'react-router'
-import loadResults from './loaders/loadResults'
+import loadResults from '../../loaders/loadResults'
 import {
   IconArrowsShuffle,
   IconChartBar,

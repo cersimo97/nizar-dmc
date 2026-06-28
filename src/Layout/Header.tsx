@@ -1,7 +1,8 @@
-import { Button, Flex, Group, Menu, Title } from '@mantine/core'
+import useAuth from '@/auth/useAuth'
+import { Button, Divider, Flex, Group, Menu, Title } from '@mantine/core'
 import {
   IconFileTypeXls,
-  IconHome,
+  IconLogout,
   IconReceipt,
   type IconProps,
 } from '@tabler/icons-react'
@@ -28,7 +29,6 @@ type MenuItem =
     }
 
 const navMenuItems: MenuItem[] = [
-  { label: 'Home', Icon: IconHome, url: '/' },
   { label: 'Vouchers', Icon: IconFileTypeXls, url: '/vouchers' },
   {
     label: 'Fatture',
@@ -41,11 +41,23 @@ const navMenuItems: MenuItem[] = [
 ]
 
 function Header() {
+  const { logout } = useAuth()
+
   return (
     <header>
       <Group justify="space-between" align="center" mb="lg">
-        <Title>KYUN KYUN - DMC</Title>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Title>KYUN KYUN - DMC</Title>
+        </Link>
         <Flex direction="row-reverse" align="center" gap="lg" component="nav">
+          <Button
+            variant="subtle"
+            leftSection={<IconLogout />}
+            onClick={logout}
+          >
+            Esci
+          </Button>
+          <Divider orientation="vertical" />
           {navMenuItems.map(item => {
             const Icon = item.Icon
             if (item.url === undefined) {

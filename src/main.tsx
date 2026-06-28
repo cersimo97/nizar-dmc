@@ -10,6 +10,7 @@ import { ModalsProvider } from '@mantine/modals'
 import { DatesProvider } from '@mantine/dates'
 import { Notifications } from '@mantine/notifications'
 import App from './App.tsx'
+import AuthProvider from './auth/AuthProvider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
       <DatesProvider settings={{ locale: 'it' }}>
         <ModalsProvider>
           <Notifications />
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </ModalsProvider>
       </DatesProvider>
     </MantineProvider>
