@@ -24,6 +24,10 @@ export default function Footer() {
         Mobile 1: {BUSINESS_INFO.mobile_1} Mobile 2: {BUSINESS_INFO.mobile_2}
       </Text>
       <Text style={styles.footerText}>E-mail: {BUSINESS_INFO.email}</Text>
+      <Text style={styles.footerText}>
+        Taxe professionnelle: {BUSINESS_INFO.taxProfessionelle} - Identifiant
+        fiscale: {BUSINESS_INFO.identifiantFiscale}
+      </Text>
     </View>
   )
 }
