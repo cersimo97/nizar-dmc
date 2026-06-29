@@ -16,4 +16,6 @@ export const BUSINESS_INFO = Object.freeze({
   mobile_1: '+39 366 729 0133',
   mobile_2: '+212 700 392 665',
   email: 'info@kyunkyunmoroccotours.com',
+  taxProfessionelle: '36209659',
+  identifiantFiscale: '73020025',
 })
