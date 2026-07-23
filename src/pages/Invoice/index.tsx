@@ -78,11 +78,20 @@ export default function Invoice() {
     [startDate, progressiveNumber]
   )
 
-  const onSubmit = async (data: InvoiceFormValues) => {
+  const onSubmit = async (
+    data: InvoiceFormValues,
+    event?: React.BaseSyntheticEvent
+  ) => {
     setLoading(true)
 
+    const native = event?.nativeEvent as SubmitEvent | undefined
+    const submitter = native?.submitter
+    const genType = submitter?.getAttribute('name') as 'signed' | 'blank'
+
     try {
-      const blob = await pdf(<PDFInvoice data={data} />).toBlob()
+      const blob = await pdf(
+        <PDFInvoice data={data} includeSignature={genType === 'signed'} />
+      ).toBlob()
       downloadFile(blob, `INVOICE B2B72 ${receiptCode.replace('/', '-')}.pdf`)
     } catch (err) {
       console.error(err)
@@ -201,13 +210,22 @@ export default function Invoice() {
             />
           </Grid.Col>
           <Grid.Col>
-            <Flex direction="row-reverse">
+            <Flex direction="row-reverse" gap="sm">
               <Button
                 type="submit"
+                name="signed"
                 leftSection={<IconFileTypePdf />}
                 loading={loading}
               >
-                Genera fattura
+                Genera fattura firmata
+              </Button>
+              <Button
+                type="submit"
+                name="blank"
+                leftSection={<IconFileTypePdf />}
+                loading={loading}
+              >
+                Genera fattura bianca
               </Button>
             </Flex>
           </Grid.Col>

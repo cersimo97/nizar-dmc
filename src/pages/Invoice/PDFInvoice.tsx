@@ -70,7 +70,13 @@ const styles = StyleSheet.create({
   bankCellBody: { textAlign: 'right' },
 })
 
-export default function PDFInvoice({ data }: { data: InvoiceFormValues }) {
+export default function PDFInvoice({
+  data,
+  includeSignature = true,
+}: {
+  data: InvoiceFormValues
+  includeSignature: boolean
+}) {
   const receiptCode = useMemo(
     () =>
       `${String(data.progressiveNumber).padStart(3, '0')}/${dayjs(data.startDate).year()}`,
@@ -124,7 +130,7 @@ export default function PDFInvoice({ data }: { data: InvoiceFormValues }) {
         </View>
 
         {/* SIGNATURE */}
-        <Signature />
+        <Signature includeSignature={includeSignature} />
 
         {/* FOOTER */}
         <Footer />

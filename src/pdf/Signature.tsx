@@ -1,7 +1,11 @@
 import { Image, Text } from '@react-pdf/renderer'
 import signature from '@images/timbro_firma.png'
 
-export default function Signature() {
+export default function Signature({
+  includeSignature,
+}: {
+  includeSignature: boolean
+}) {
   return (
     <>
       <Text
@@ -16,14 +20,16 @@ export default function Signature() {
       >
         Signature
       </Text>
-      <Image
-        src={signature}
-        style={{
-          width: 160,
-          marginHorizontal: 'auto',
-          transform: 'translateX(50%)',
-        }}
-      />
+      {includeSignature && (
+        <Image
+          src={signature}
+          style={{
+            width: 160,
+            marginHorizontal: 'auto',
+            transform: 'translateX(50%)',
+          }}
+        />
+      )}
     </>
   )
 }
