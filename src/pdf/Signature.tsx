@@ -2,7 +2,7 @@ import { Image, Text } from '@react-pdf/renderer'
 import signature from '@images/timbro_firma.png'
 
 export default function Signature({
-  includeSignature,
+  includeSignature = true,
 }: {
   includeSignature: boolean
 }) {
