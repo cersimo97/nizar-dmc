@@ -4,7 +4,7 @@ import signature from '@images/timbro_firma.png'
 export default function Signature({
   includeSignature = true,
 }: {
-  includeSignature: boolean
+  includeSignature?: boolean
 }) {
   return (
     <>
