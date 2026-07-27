@@ -56,7 +56,7 @@ export default function Proforma() {
 
   const receiptCode = useMemo(
     () =>
-      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate).year()}`,
+      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate as Date).year()}`,
     [startDate, progressiveNumber]
   )
 
@@ -97,7 +97,8 @@ export default function Proforma() {
               name="receiptDate"
               render={({ field, fieldState: { error } }) => (
                 <DatePickerInput
-                  {...field}
+                  value={field.value as Date}
+                  onChange={field.onChange}
                   label="Data fattura"
                   error={error?.message}
                   valueFormat="DD/MM/YYYY"
@@ -124,7 +125,8 @@ export default function Proforma() {
               name="startDate"
               render={({ field, fieldState: { error } }) => (
                 <DatePickerInput
-                  {...field}
+                  value={field.value as Date}
+                  onChange={field.onChange}
                   label="Data inizio viaggio"
                   error={error?.message}
                   valueFormat="DD/MM/YYYY"

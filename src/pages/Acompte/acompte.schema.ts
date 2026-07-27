@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 export const schema = z.object({
-  docDate: z.date(),
-  startDate: z.date(),
+  docDate: z.coerce.date(),
+  startDate: z.coerce.date(),
   progressiveNumber: z
     .number()
     .min(0, 'Il numero progressivo non può essere minore di 0'),

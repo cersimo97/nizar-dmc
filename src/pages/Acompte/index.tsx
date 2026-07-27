@@ -75,7 +75,7 @@ export default function Acompte() {
 
   const receiptCode = useMemo<string>(
     () =>
-      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate).year()}`,
+      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate as Date).year()}`,
     [startDate, progressiveNumber]
   )
 
@@ -98,7 +98,8 @@ export default function Acompte() {
               name="docDate"
               render={({ field, fieldState: { error } }) => (
                 <DatePickerInput
-                  {...field}
+                  value={field.value as Date}
+                  onChange={field.onChange}
                   label="Data documento"
                   error={error?.message}
                   valueFormat="DD/MM/YYYY"
@@ -137,7 +138,8 @@ export default function Acompte() {
               name="startDate"
               render={({ field, fieldState: { error } }) => (
                 <DatePickerInput
-                  {...field}
+                  value={field.value as Date}
+                  onChange={field.onChange}
                   label="Data inizio viaggio"
                   error={error?.message}
                   valueFormat="DD/MM/YYYY"

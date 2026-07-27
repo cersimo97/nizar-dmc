@@ -17,49 +17,28 @@ import {
   IconInfoCircle,
 } from '@tabler/icons-react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import type { InvoiceFormValues } from './types'
-import type { TourType } from '@/types/Tour'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo, useState } from 'react'
 import { pdf } from '@react-pdf/renderer'
 import dayjs from 'dayjs'
 import PDFInvoice from './PDFInvoice'
 import { downloadFile } from '@/utils/download'
-
-const schema: yup.ObjectSchema<InvoiceFormValues> = yup.object().shape({
-  receiptDate: yup.date().required('Inserisci la data della fattura'),
-  startDate: yup.date().required('Inserisci la data di inizio viaggio'),
-  progressiveNumber: yup
-    .number()
-    .required('Inserisci il numero progressivo della fattura')
-    .min(0, 'Il numero progressivo non può essere negativo'),
-  tour: yup.object().shape({
-    type: yup
-      .mixed<TourType>()
-      .oneOf(['standard', 'surf'], 'Tipo di viaggio non riconosciuto')
-      .required('Inserisci il tipo di viaggio'),
-    amount: yup
-      .number()
-      .typeError('Il costo deve essere un numero')
-      .required('Inserisci il costo del viaggio')
-      .min(0, 'Il costo non può essere negativo'),
-  }),
-})
+import { schema, type InvoiceForm } from './invoice.schema'
+import type { TourType } from '@/types/Tour'
 
 export default function Invoice() {
   const [loading, setLoading] = useState(false)
-  const { control, handleSubmit } = useForm<InvoiceFormValues>({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       receiptDate: new Date(),
       startDate: new Date(),
       progressiveNumber: 1,
       tour: {
-        type: 'standard',
+        type: 'standard' as TourType,
         amount: 10200,
       },
     },
-    resolver: yupResolver(schema),
+    resolver: zodResolver(schema),
   })
 
   const startDate = useWatch({
@@ -74,12 +53,12 @@ export default function Invoice() {
 
   const receiptCode = useMemo<string>(
     () =>
-      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate).year()}`,
+      `${String(progressiveNumber).padStart(3, '0')}/${dayjs(startDate as Date).year()}`,
     [startDate, progressiveNumber]
   )
 
   const onSubmit = async (
-    data: InvoiceFormValues,
+    data: InvoiceForm,
     event?: React.BaseSyntheticEvent
   ) => {
     setLoading(true)
@@ -124,7 +103,8 @@ export default function Invoice() {
               name="receiptDate"
               render={({ field, fieldState: { error } }) => (
                 <DatePickerInput
-                  {...field}
+                  value={field.value as Date}
+                  onChange={field.onChange}
                   label="Data fattura"
                   error={error?.message}
                   valueFormat="DD/MM/YYYY"
@@ -151,7 +131,8 @@ export default function Invoice() {
               name="startDate"
               render={({ field, fieldState: { error } }) => (
                 <DatePickerInput
-                  {...field}
+                  value={field.value as Date}
+                  onChange={field.onChange}
                   label="Data inizio viaggio"
                   error={error?.message}
                   valueFormat="DD/MM/YYYY"
