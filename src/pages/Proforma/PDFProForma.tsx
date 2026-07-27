@@ -109,7 +109,7 @@ export default function PDFProForma({ data }: { data: ReceiptFormValues }) {
         <Header
           invoiceCode={receiptCode}
           invoiceDate={data.receiptDate}
-          isProforma
+          type="proforma"
         />
 
         <View style={styles.table}>
