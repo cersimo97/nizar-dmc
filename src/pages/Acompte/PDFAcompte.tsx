@@ -1,11 +1,10 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
-import type { InvoiceFormValues } from './types'
+import type { AcompteForm } from './acompte.schema'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
-
-import Footer from '@/pdf/Footer'
-import Signature from '@/pdf/Signature'
 import Header from '@/pdf/Header'
+import Signature from '@/pdf/Signature'
+import Footer from '@/pdf/Footer'
 
 const PADDING_VALUE = 24
 
@@ -70,13 +69,7 @@ const styles = StyleSheet.create({
   bankCellBody: { textAlign: 'right' },
 })
 
-export default function PDFInvoice({
-  data,
-  includeSignature = true,
-}: {
-  data: InvoiceFormValues
-  includeSignature: boolean
-}) {
+export default function PDFAcompte({ data }: { data: AcompteForm }) {
   const receiptCode = useMemo(
     () =>
       `${String(data.progressiveNumber).padStart(3, '0')}/${dayjs(data.startDate).year()}`,
@@ -87,10 +80,14 @@ export default function PDFInvoice({
     <Document
       author="KYUN KYUN MOROCCO TOURS"
       creator="KYUN KYUN MOROCCO TOURS"
-      title={`FACTURE B2B72 ${receiptCode}`}
+      title={`FACTURE ACOMPTE ${receiptCode}`}
     >
       <Page size="A4" style={styles.page}>
-        <Header invoiceCode={receiptCode} invoiceDate={data.receiptDate} />
+        <Header
+          invoiceCode={receiptCode}
+          invoiceDate={data.docDate}
+          type="acompte"
+        />
 
         <View style={styles.table}>
           {/* HEADER */}
@@ -102,7 +99,10 @@ export default function PDFInvoice({
           <View style={styles.row}>
             <Text style={[styles.cell, styles.designation]}>
               {data.tour.type === 'standard' ? 'BIG TOUR' : 'SURF & SOUND'} -{' '}
-              {dayjs(data.startDate).format('DDMMYY')}
+              {dayjs(data.startDate).format('DDMMYY')} - AVANCE{' '}
+              {Intl.NumberFormat('en-EN', { style: 'percent' }).format(
+                data.tour.percAvance / 100
+              )}
             </Text>
             <Text style={[styles.cell, styles.amount]}>
               {Intl.NumberFormat('it-IT', {
@@ -126,7 +126,7 @@ export default function PDFInvoice({
         </View>
 
         {/* SIGNATURE */}
-        <Signature includeSignature={includeSignature} />
+        <Signature includeSignature={data.includeSignature} />
 
         {/* FOOTER */}
         <Footer />

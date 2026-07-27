@@ -36,6 +36,7 @@ const navMenuItems: MenuItem[] = [
     children: [
       { label: 'Proforma', url: '/proforma' },
       { label: 'Fattura', url: '/invoice' },
+      { label: 'Acconto', url: '/acompte' },
     ],
   },
 ]

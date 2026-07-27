@@ -5,13 +5,13 @@ import kyunLogo from '@images/logo.png'
 interface HeaderProps {
   invoiceDate: Date | string
   invoiceCode: string
-  isProforma: boolean
+  type?: 'proforma' | 'acompte' | 'invoice'
 }
 
 export default function Header({
   invoiceCode,
   invoiceDate,
-  isProforma,
+  type,
 }: HeaderProps) {
   return (
     <>
@@ -38,7 +38,13 @@ export default function Header({
           fontWeight: 'bold',
         }}
       >
-        FACTURE {isProforma && 'PROFORMA'} N° {invoiceCode}
+        FACTURE{' '}
+        {type === 'proforma'
+          ? 'PROFORMA'
+          : type === 'acompte'
+            ? "D'ACOMPTE"
+            : ''}{' '}
+        N° {invoiceCode}
       </Text>
     </>
   )

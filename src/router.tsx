@@ -9,6 +9,7 @@ import Proforma from './pages/Proforma'
 import Invoice from './pages/Invoice'
 import Login from './pages/auth/Login'
 import ProtectedRoute from './auth/ProtectedRoute'
+import Acompte from './pages/Acompte'
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
           { path: 'vouchers', Component: Vouchers },
           { path: 'proforma', Component: Proforma },
           { path: 'invoice', Component: Invoice },
+          { path: 'acompte', Component: Acompte },
         ],
       },
     ],
