@@ -1,11 +1,11 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
-import type { InvoiceFormValues } from './types'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
 
 import Footer from '@/pdf/Footer'
 import Signature from '@/pdf/Signature'
 import Header from '@/pdf/Header'
+import type { InvoiceForm } from './invoice.schema'
 
 const PADDING_VALUE = 24
 
@@ -74,7 +74,7 @@ export default function PDFInvoice({
   data,
   includeSignature = true,
 }: {
-  data: InvoiceFormValues
+  data: InvoiceForm
   includeSignature: boolean
 }) {
   const receiptCode = useMemo(
