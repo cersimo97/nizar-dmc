@@ -26,6 +26,7 @@ import { notifications } from '@mantine/notifications'
 import { pdf } from '@react-pdf/renderer'
 import PDFAcompte from './PDFAcompte'
 import { downloadFile } from '@/utils/download'
+import type { TourType } from '@/types/Tour'
 
 export default function Acompte() {
   const [loading, setLoading] = useState(false)
@@ -34,7 +35,7 @@ export default function Acompte() {
       docDate: new Date(),
       startDate: new Date(),
       tour: {
-        type: 'standard' as const,
+        type: 'standard' as TourType,
         amount: 3060,
         percAvance: 30,
       },

@@ -11,8 +11,7 @@ import {
   Title,
 } from '@mantine/core'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { DatePickerInput } from '@mantine/dates'
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
@@ -21,48 +20,28 @@ import {
   IconFileTypePdf,
   IconInfoCircle,
 } from '@tabler/icons-react'
-import type { ReceiptFormValues } from './types'
 import { pdf } from '@react-pdf/renderer'
 import PDFProForma from './PDFProForma'
 import { notifications } from '@mantine/notifications'
-import type { TourType } from '@/types/Tour'
 import { downloadFile } from '@/utils/download'
-
-const schema: yup.ObjectSchema<ReceiptFormValues> = yup.object().shape({
-  receiptDate: yup.date().required('Inserisci la data della fattura'),
-  startDate: yup.date().required('Inserisci la data di inizio viaggio'),
-  progressiveNumber: yup
-    .number()
-    .required('Inserisci il numero progressivo della fattura')
-    .min(0, 'Il numero progressivo non può essere negativo'),
-  tour: yup.object().shape({
-    type: yup
-      .mixed<TourType>()
-      .oneOf(['standard', 'surf'], 'Tipo di viaggio non riconosciuto')
-      .required('Inserisci il tipo di viaggio'),
-    amount: yup
-      .number()
-      .typeError('Il costo deve essere un numero')
-      .required('Inserisci il costo del viaggio')
-      .min(0, 'Il costo non può essere negativo'),
-    split: yup.boolean(),
-  }),
-})
+import { schema, type ProformaForm } from './proforma.schema'
+import type { TourType } from '@/types/Tour'
 
 export default function Proforma() {
   const [loading, setLoading] = useState(false)
-  const { control, handleSubmit } = useForm<ReceiptFormValues>({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       receiptDate: new Date(),
       startDate: new Date(),
       progressiveNumber: 1,
       tour: {
-        type: 'standard',
+        type: 'standard' as TourType,
         amount: 10200,
         split: true,
       },
+      includeSignature: false,
     },
-    resolver: yupResolver(schema),
+    resolver: zodResolver(schema),
   })
 
   const startDate = useWatch({
@@ -81,7 +60,7 @@ export default function Proforma() {
     [startDate, progressiveNumber]
   )
 
-  const onSubmit = async (data: ReceiptFormValues) => {
+  const onSubmit = async (data: ProformaForm) => {
     setLoading(true)
 
     try {
@@ -213,6 +192,19 @@ export default function Proforma() {
                   onChange={field.onChange}
                   onBlur={field.onBlur}
                   label="Dividi spesa (acconto e saldo)"
+                />
+              )}
+            />
+          </Grid.Col>
+          <Grid.Col>
+            <Controller
+              control={control}
+              name="includeSignature"
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onChange={field.onChange}
+                  label="Includi timbro e firma"
                 />
               )}
             />

@@ -6,7 +6,6 @@ import {
   Text,
   View,
 } from '@react-pdf/renderer'
-import type { ReceiptFormValues } from './types'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import bankLogo from './assets/bank_logo.jpeg'
@@ -14,6 +13,7 @@ import { BANK_DETAILS, BUSINESS_INFO } from '../../const'
 import Header from '@/pdf/Header'
 import Signature from '@/pdf/Signature'
 import Footer from '@/pdf/Footer'
+import type { ProformaForm } from './proforma.schema'
 
 const PADDING_VALUE = 24
 
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   bankCellBody: { textAlign: 'right' },
 })
 
-export default function PDFProForma({ data }: { data: ReceiptFormValues }) {
+export default function PDFProForma({ data }: { data: ProformaForm }) {
   const receiptCode = useMemo(
     () =>
       `${String(data.progressiveNumber).padStart(3, '0')}/${dayjs(data.startDate).year()}`,
@@ -281,7 +281,7 @@ export default function PDFProForma({ data }: { data: ReceiptFormValues }) {
         </View>
 
         {/* SIGNATURE */}
-        <Signature />
+        <Signature includeSignature={data.includeSignature} />
 
         {/* FOOTER */}
         <Footer />
